@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LUYỆN NGHE CHỐNG ĐIẾC - VSTEP LISTENING</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="style.css?v=14">
+</head>
+<body>
+    <div class="background-shape shape-1"></div>
+    <div class="background-shape shape-2"></div>
+    
+    <div class="app-layout">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>VSTEP LISTENING</h2>
+                <p>LUYỆN NGHE CHỐNG ĐIẾC</p>
+                <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle Dark/Light Mode">
+                    <svg id="theme-icon-moon" class="theme-icon" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+                    </svg>
+                    <svg id="theme-icon-sun" class="theme-icon hidden" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                    </svg>
+                </button>
+
+                <div class="progress-container">
+                    <div class="progress-info">
+                        <span class="progress-text">Tiến độ lộ trình</span>
+                        <span id="progress-percentage" class="progress-percentage">0%</span>
+                    </div>
+                    <div class="progress-bar-bg">
+                        <div id="progress-bar-fill" class="progress-bar-fill" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+            <ul id="day-list" class="day-list">
+                <!-- Days will be injected here by JS -->
+            </ul>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <div class="container">
+                <header class="app-header">
+                    <a href="https://www.facebook.com/nguyetpham28" target="_blank" id="day-badge" class="badge badge-link">ENGLISH WITH MISS NGUYET</a>
+                    <div class="title-wrapper">
+                        <img src="cat.jpg" alt="Mascot" class="mascot-img mascot-left">
+                        <h1>VSTEP LISTENING</h1>
+                        <img src="cat.jpg" alt="Mascot" class="mascot-img mascot-right">
+                    </div>
+                    <p class="subtitle"><strong>Luyện nghe chống điếc - Để không hối tiếc</strong></p>
+                    
+                    <div class="audio-warning">
+                        <strong><span class="warning-title">LƯU Ý:</span> Chỉ nghe 1 lần duy nhất, không nghe lại, không tua, không chỉnh tốc độ lúc làm bài. Sau khi hoàn thành xong có thể nghe lại nhiều lần.</strong>
+                    </div>
+                    
+                    <div class="audio-container" id="audio-container">
+                        <!-- Audios will be injected here dynamically -->
+                    </div>
+                </header>
+
+                <div id="quiz-container">
+                    <!-- Questions will be injected here by JS -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Result Modal -->
+    <div id="result-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h2>Kết Quả Làm Bài</h2>
+            <div class="score-display-modal">
+                <span id="modal-score" class="score-correct"></span><span id="modal-total" class="score-total"></span>
+            </div>
+            <p id="modal-message" class="modal-message"></p>
+            <div class="modal-actions">
+                <button class="btn-review" onclick="closeModal()">Xem lại đáp án</button>
+                <button class="btn-retry" id="modal-retry-btn">Làm lại bài này</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="data.js?v=11"></script>
+    <script src="script.js?v=15"></script>
+
+    <!-- Floating Hashtag Link -->
+    <a href="https://www.facebook.com/nguyetpham28" target="_blank" class="floating-tag">#englishwithmissnguyet</a>
+</body>
+</html>
