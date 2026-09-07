@@ -904,7 +904,7 @@ function initLogin() {
 
     function handleLoginSubmit() {
         const nameVal = studentNameInput ? studentNameInput.value.trim() : '';
-        const rawClassVal = studentClassInput ? studentClassInput.value.trim().toUpperCase().replace(/\s+/g, '') : '';
+        let rawClassVal = studentClassInput ? studentClassInput.value.trim().toUpperCase().replace(/\s+/g, '') : '';
         const passwordVal = studentPasswordInput ? studentPasswordInput.value.trim() : '';
 
         if (!nameVal) {
@@ -913,16 +913,22 @@ function initLogin() {
             return;
         }
 
-        if (!rawClassVal) {
-            showLoginError('Vui lòng nhập Lớp học.');
-            if (studentClassInput) studentClassInput.focus();
-            return;
-        }
+        const isTeacher = nameVal.toUpperCase() === 'PTMN';
 
-        if (!ALLOWED_CLASSES.includes(rawClassVal)) {
-            showLoginError(`Lớp học không hợp lệ. Chỉ chấp nhận các lớp: ${ALLOWED_CLASSES.join(', ')}.`);
-            if (studentClassInput) studentClassInput.focus();
-            return;
+        if (isTeacher) {
+            rawClassVal = rawClassVal || 'GV';
+        } else {
+            if (!rawClassVal) {
+                showLoginError('Vui lòng nhập Lớp học.');
+                if (studentClassInput) studentClassInput.focus();
+                return;
+            }
+
+            if (!ALLOWED_CLASSES.includes(rawClassVal) && rawClassVal !== 'GV') {
+                showLoginError(`Lớp học không hợp lệ. Chỉ chấp nhận các lớp: ${ALLOWED_CLASSES.join(', ')}.`);
+                if (studentClassInput) studentClassInput.focus();
+                return;
+            }
         }
 
         if (!passwordVal) {
@@ -931,7 +937,11 @@ function initLogin() {
             return;
         }
 
-        if (passwordVal.toUpperCase() !== REQUIRED_PASSWORD) {
+        const isValidPassword = isTeacher 
+            ? (passwordVal.toUpperCase() === 'GV' || passwordVal.toUpperCase() === REQUIRED_PASSWORD)
+            : (passwordVal.toUpperCase() === REQUIRED_PASSWORD);
+
+        if (!isValidPassword) {
             showLoginError('Mật khẩu không chính xác. Vui lòng kiểm tra lại!');
             if (studentPasswordInput) {
                 studentPasswordInput.focus();
