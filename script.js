@@ -860,10 +860,46 @@ function closeModal() {
 }
 
 // --- Login Logic ---
-const ALLOWED_CLASSES = ['CB196', 'CB201', 'CB202', 'B209'];
+const ALLOWED_CLASSES = ['CB206', 'GV'];
 const REQUIRED_PASSWORD = 'PRACTICELISTENING';
 const GOOGLE_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLScU5Jd_R15uECAgsBMHZsqKAaCR2g2K1IzqOGs-ZN9_RbDkdQ/formResponse';
 const GOOGLE_FORM_ENTRY = 'entry.388968236';
+
+const AUTHORIZED_STUDENTS = [
+    'Nguyễn Thị Vân Anh',
+    'Nguyễn Thị Hồng Duyên',
+    'Nguyễn Thị Thúy Hồng',
+    'Trương Ngọc Nhi',
+    'Nguyễn Phạm Như Quỳnh',
+    'Trần Lê Quỳnh',
+    'Ông Lê Thành',
+    'Trần Nguyễn Thanh Thảo',
+    'Phan Nhật Thiện',
+    'Trần Thị Cẩm Tiên',
+    'Võ Trần Bảo Tính',
+    'Trương Thanh Toàn',
+    'Phạm Ngọc Trâm',
+    'Nguyễn Võ Bảo Trân'
+];
+
+function normalizeName(str) {
+    if (!str) return '';
+    return str.trim().toLowerCase().replace(/\s+/g, ' ');
+}
+
+function removeAccents(str) {
+    if (!str) return '';
+    return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D').toLowerCase().trim().replace(/\s+/g, ' ');
+}
+
+function isAuthorizedStudent(name) {
+    const norm = normalizeName(name);
+    const noAcc = removeAccents(name);
+    if (norm === 'ptmn') return true;
+    return AUTHORIZED_STUDENTS.some(auth => {
+        return normalizeName(auth) === norm || removeAccents(auth) === noAcc;
+    });
+}
 
 function initLogin() {
     const loginOverlay = document.getElementById('loginOverlay');
@@ -915,6 +951,12 @@ function initLogin() {
 
         const isTeacher = nameVal.toUpperCase() === 'PTMN';
 
+        if (!isAuthorizedStudent(nameVal)) {
+            showLoginError('Họ và tên không nằm trong danh sách học viên lớp CB206!');
+            if (studentNameInput) studentNameInput.focus();
+            return;
+        }
+
         if (isTeacher) {
             rawClassVal = rawClassVal || 'GV';
         } else {
@@ -924,8 +966,8 @@ function initLogin() {
                 return;
             }
 
-            if (!ALLOWED_CLASSES.includes(rawClassVal) && rawClassVal !== 'GV') {
-                showLoginError(`Lớp học không hợp lệ. Chỉ chấp nhận các lớp: ${ALLOWED_CLASSES.join(', ')}.`);
+            if (rawClassVal !== 'CB206') {
+                showLoginError('Hệ thống hiện chỉ mở cho học viên lớp CB206!');
                 if (studentClassInput) studentClassInput.focus();
                 return;
             }
@@ -957,7 +999,15 @@ function initLogin() {
         }
 
         // Save student info to storage
-        localStorage.setItem('vstep_student_name', nameVal);
+        let displayName = nameVal;
+        if (isTeacher) {
+            displayName = 'Cô Nguyệt (PTMN)';
+        } else {
+            const matched = AUTHORIZED_STUDENTS.find(auth => normalizeName(auth) === normalizeName(nameVal) || removeAccents(auth) === removeAccents(nameVal));
+            if (matched) displayName = matched;
+        }
+
+        localStorage.setItem('vstep_student_name', displayName);
         localStorage.setItem('vstep_student_class', rawClassVal);
         localStorage.setItem('vstep_student_logged_in', 'true');
         sessionStorage.setItem('vstep_student_logged_in', 'true');
@@ -965,7 +1015,7 @@ function initLogin() {
         // Submit to Google Form (no-cors)
         try {
             const formData = new URLSearchParams();
-            formData.append(GOOGLE_FORM_ENTRY, `${nameVal} - ${rawClassVal}`);
+            formData.append(GOOGLE_FORM_ENTRY, `${displayName} - ${rawClassVal}`);
             fetch(GOOGLE_FORM_URL, {
                 method: 'POST',
                 mode: 'no-cors',
