@@ -14,8 +14,21 @@ const daysData = {
           { id: 'D', textEN: "At a bakery.", textVN: "Ở một tiệm bánh." }
         ],
         correctAnswer: 'D',
-        transcriptEN: "Hello, Mr. Dario. I'm calling from Leroy's Cake Shop about the cake you ordered. I'm really sorry but we've made a mistake. We used the wrong filling for the cake—instead of blueberries, we put raspberries in it. You have two choices. If you don’t mind the different ingredients, we’ll give you this cake for free. Or, if you still want the cake with blueberry filling, we’ll offer you a thirty percent discount and bake you a new cake by tomorrow. Please let us know what you decide.",
-        transcriptVN: "Xin chào ông Dario. Tôi gọi từ cửa hàng bánh Leroy về chiếc bánh ông đã đặt. Tôi thật sự xin lỗi vì chúng tôi đã mắc một lỗi nhỏ. Chúng tôi đã dùng sai nhân bánh – thay vì dùng việt quất, chúng tôi lại dùng mâm xôi. Ông có hai lựa chọn: nếu ông không phiền, chúng tôi sẽ tặng chiếc bánh này miễn phí. Hoặc nếu ông vẫn muốn bánh với nhân việt quất, chúng tôi sẽ giảm giá 30% và làm lại bánh để giao vào ngày mai. Vui lòng cho chúng tôi biết lựa chọn của ông."
+        transcriptEN: "Hello, Mr. Dario. <span class=\"highlight-answer\">I'm calling from Leroy's Cake Shop</span> about the cake you ordered. I'm really sorry but we've made a mistake. We used the wrong filling for the cake—instead of blueberries, we put raspberries in it. You have two choices. If you don’t mind the different ingredients, we’ll give you this cake for free. Or, if you still want the cake with blueberry filling, we’ll offer you a thirty percent discount and <span class=\"highlight-answer\">bake you a new cake by tomorrow</span>. Please let us know what you decide.",
+        transcriptVN: "Xin chào ông Dario. <span class=\"highlight-answer\">Tôi gọi từ cửa hàng bánh Leroy</span> về chiếc bánh ông đã đặt. Tôi thật sự xin lỗi vì chúng tôi đã mắc một lỗi nhỏ. Chúng tôi đã dùng sai nhân bánh – thay vì dùng việt quất, chúng tôi lại dùng mâm xôi. Ông có hai lựa chọn: nếu ông không phiền, chúng tôi sẽ tặng chiếc bánh này miễn phí. Hoặc nếu ông vẫn muốn bánh với nhân việt quất, chúng tôi sẽ giảm giá 30% và <span class=\"highlight-answer\">làm lại bánh để giao vào ngày mai</span>. Vui lòng cho chúng tôi biết lựa chọn của ông.",
+        vocabulary: [
+          "make a mistake /meɪk ə mɪˈsteɪk/ (idiom): phạm lỗi, mắc sai lầm",
+          "filling /ˈfɪl.ɪŋ/ (n): nhân bánh",
+          "instead of /ɪnˈsted əv/ (prep): thay vì",
+          "choice /tʃɔɪs/ (n): sự lựa chọn",
+          "mind /maɪnd/ (v): bận tâm, phiền lòng",
+          "ingredient /ɪnˈɡriː.di.ənt/ (n): nguyên liệu, thành phần",
+          "for free /fər friː/ (idiom): miễn phí",
+          "offer /ˈɒf.ər/ (v): đưa ra, đề xuất",
+          "discount /ˈdɪs.kaʊnt/ (n): mức giảm giá, chiết khấu",
+          "bake /beɪk/ (v): nướng (bánh)",
+          "decide /dɪˈsaɪd/ (v): quyết định"
+        ]
       },
       {
         id: 2,
@@ -28,8 +41,22 @@ const daysData = {
           { id: 'D', textEN: "A construction worker", textVN: "Công nhân xây dựng" }
         ],
         correctAnswer: 'B',
-        transcriptEN: "As the director of the city's parks department, I’d like to thank all of you for volunteering to plant flowers today here in Bailey’s Park. I’d like to point out that the flowers you’ll be planting were selected specifically because they are known to attract a lot of butterflies. The parks department has provided enough shovels and rakes for everyone, so please grab one and let’s get to work!",
-        transcriptVN: "Là giám đốc của Sở công viên thành phố, tôi muốn cảm ơn tất cả các bạn vì đã tình nguyện đến trồng hoa hôm nay tại Công viên Bailey. Tôi muốn lưu ý rằng những loài hoa được trồng hôm nay đã được chọn kỹ càng vì chúng nổi tiếng với khả năng thu hút nhiều loài bướm. Sở công viên đã chuẩn bị đủ xẻng và cào cho mọi người, nên xin hãy chọn một cái và bắt tay vào việc nhé!"
+        transcriptEN: "<span class=\"highlight-answer\">As the director of the city's parks department</span>, I’d like to thank all of you for volunteering to plant flowers today here in Bailey’s Park. I’d like to point out that the flowers you’ll be planting were selected specifically because they are known to attract a lot of butterflies. <span class=\"highlight-answer\">The parks department has provided enough shovels and rakes</span> for everyone, so please grab one and let’s get to work!",
+        transcriptVN: "<span class=\"highlight-answer\">Là giám đốc của Sở công viên thành phố</span>, tôi muốn cảm ơn tất cả các bạn vì đã tình nguyện đến trồng hoa hôm nay tại Công viên Bailey. Tôi muốn lưu ý rằng những loài hoa được trồng hôm nay đã được chọn kỹ càng vì chúng nổi tiếng với khả năng thu hút nhiều loài bướm. <span class=\"highlight-answer\">Sở công viên đã chuẩn bị đủ xẻng và cào</span> cho mọi người, nên xin hãy chọn một cái và bắt tay vào việc nhé!",
+        vocabulary: [
+          "director /daɪˈrek.tər/ (n): giám đốc, người điều hành",
+          "department /dɪˈpɑːt.mənt/ (n): cơ quan, sở, phòng ban",
+          "volunteer /ˌvɒl.ənˈtɪər/ (v, n): tình nguyện, tình nguyện viên",
+          "point out /pɔɪnt aʊt/ (phr v): chỉ ra, lưu ý",
+          "select /sɪˈlekt/ (v): lựa chọn cẩn thận",
+          "specifically /spəˈsɪf.ɪ.kəl.i/ (adv): một cách đặc biệt, cụ thể",
+          "attract /əˈtrækt/ (v): thu hút, lôi cuốn",
+          "butterfly /ˈbʌt.ə.flaɪ/ (n): con bướm",
+          "provide /prəˈvaɪd/ (v): cung cấp, chuẩn bị",
+          "shovel /ˈʃʌv.əl/ (n): cái xẻng xúc đất",
+          "rake /reɪk/ (n): cái cào lá / đất",
+          "grab /ɡræb/ (v): lấy, cầm lấy"
+        ]
       },
       {
         id: 3,
@@ -42,8 +69,22 @@ const daysData = {
           { id: 'D', textEN: "To organize a client visit", textVN: "Sắp xếp chuyến thăm khách hàng" }
         ],
         correctAnswer: 'A',
-        transcriptEN: "I’d like to introduce our new branch manager, Ms. Susan Lee. One of Ms. Lee’s priorities is to secure our position as the leading bank in our community. She hopes to accomplish this by providing affordable loans to local businesses to help them grow. I know you’d all like to find out more. We only have the room until two o’clock, but Ms. Lee will be starting work here full time on Monday, so you can contact her any time after that.",
-        transcriptVN: "Tôi xin giới thiệu giám đốc chi nhánh mới của chúng ta – bà Susan Lee. Một trong những ưu tiên của bà là duy trì vị thế hàng đầu của ngân hàng trong cộng đồng. Bà hy vọng sẽ thực hiện điều đó bằng cách cung cấp các khoản vay hợp lý cho các doanh nghiệp địa phương để hỗ trợ họ phát triển. Tôi biết các bạn muốn tìm hiểu thêm, nhưng chúng ta chỉ có phòng họp đến 2 giờ. Bà Lee sẽ bắt đầu làm việc toàn thời gian từ thứ Hai, nên bạn có thể liên hệ sau thời điểm đó."
+        transcriptEN: "<span class=\"highlight-answer\">I’d like to introduce our new branch manager, Ms. Susan Lee</span>. One of Ms. Lee’s priorities is to secure our position as the leading bank in our community. She hopes to accomplish this by providing affordable loans to local businesses to help them grow. I know you’d all like to find out more. We only have the room until two o’clock, but Ms. Lee will be starting work here full time on Monday, so you can contact her any time after that.",
+        transcriptVN: "<span class=\"highlight-answer\">Tôi xin giới thiệu giám đốc chi nhánh mới của chúng ta – bà Susan Lee</span>. Một trong những ưu tiên của bà là duy trì vị thế hàng đầu của ngân hàng trong cộng đồng. Bà hy vọng sẽ thực hiện điều đó bằng cách cung cấp các khoản vay hợp lý cho các doanh nghiệp địa phương để hỗ trợ họ phát triển. Tôi biết các bạn muốn tìm hiểu thêm, nhưng chúng ta chỉ có phòng họp đến 2 giờ. Bà Lee sẽ bắt đầu làm việc toàn thời gian từ thứ Hai, nên bạn có thể liên hệ sau thời điểm đó.",
+        vocabulary: [
+          "introduce /ˌɪn.trəˈdjuːs/ (v): giới thiệu",
+          "branch manager /brɑːntʃ ˈmæn.ɪ.dʒər/ (n): giám đốc chi nhánh",
+          "priority /praɪˈɒr.ə.ti/ (n): sự ưu tiên hàng đầu",
+          "secure /sɪˈkjʊər/ (v): củng cố, đảm bảo vững chắc",
+          "position /pəˈzɪʃ.ən/ (n): vị thế, vị trí",
+          "leading bank /ˈliː.dɪŋ bæŋk/ (n): ngân hàng dẫn đầu, hàng đầu",
+          "community /kəˈmjuː.nə.ti/ (n): cộng đồng",
+          "accomplish /əˈkʌm.plɪʃ/ (v): hoàn thành, đạt được",
+          "affordable loan /əˈfɔː.də.bəl ləʊn/ (n): khoản vay lãi suất hợp lý",
+          "local business /ˈləʊ.kəl ˈbɪz.nɪs/ (n): doanh nghiệp địa phương",
+          "full time /ˌfʊl ˈtaɪm/ (adj, adv): toàn thời gian",
+          "contact /ˈkɒn.tækt/ (v): liên hệ, liên lạc"
+        ]
       },
       {
         id: 4,
@@ -56,8 +97,22 @@ const daysData = {
           { id: 'D', textEN: "At an amusement park", textVN: "Tại công viên giải trí" }
         ],
         correctAnswer: 'B',
-        transcriptEN: "Attention Blackstone Railways passengers! We have just installed a new automated ticketing system. The ticketing machines are located near the main entrance. The touch screens are quick and easy to use when purchasing your train tickets. And, for your convenience, instructions on how to use the system are now available in a wide variety of languages, including English, Spanish, French, and Mandarin. If you need assistance with the ticketing machines, a Blackstone Railways representative can assist you.",
-        transcriptVN: "Thông báo đến hành khách của Hãng Đường Sắt Blackstone! Chúng tôi vừa lắp đặt một hệ thống bán vé tự động mới. Các máy bán vé được đặt gần cổng chính. Màn hình cảm ứng rất dễ sử dụng khi bạn mua vé tàu. Để tiện lợi hơn, hướng dẫn sử dụng hệ thống hiện đã có sẵn bằng nhiều ngôn ngữ như tiếng Anh, Tây Ban Nha, Pháp và tiếng Trung. Nếu cần giúp đỡ, nhân viên của Blackstone Railways sẽ hỗ trợ bạn."
+        transcriptEN: "<span class=\"highlight-answer\">Attention Blackstone Railways passengers! We have just installed a new automated ticketing system</span>. The ticketing machines are located near the main entrance. The touch screens are quick and easy to use <span class=\"highlight-answer\">when purchasing your train tickets</span>. And, for your convenience, instructions on how to use the system are now available in a wide variety of languages, including English, Spanish, French, and Mandarin. If you need assistance with the ticketing machines, a Blackstone Railways representative can assist you.",
+        transcriptVN: "<span class=\"highlight-answer\">Thông báo đến hành khách của Hãng Đường Sắt Blackstone! Chúng tôi vừa lắp đặt một hệ thống bán vé tự động mới</span>. Các máy bán vé được đặt gần cổng chính. Màn hình cảm ứng rất dễ sử dụng <span class=\"highlight-answer\">khi bạn mua vé tàu</span>. Để tiện lợi hơn, hướng dẫn sử dụng hệ thống hiện đã có sẵn bằng nhiều ngôn ngữ như tiếng Anh, Tây Ban Nha, Pháp và tiếng Trung. Nếu cần giúp đỡ, nhân viên của Blackstone Railways sẽ hỗ trợ bạn.",
+        vocabulary: [
+          "passenger /ˈpæs.ən.dʒər/ (n): hành khách",
+          "install /ɪnˈstɔːl/ (v): lắp đặt, cài đặt",
+          "automated /ˈɔː.tə.meɪ.tɪd/ (adj): tự động hóa",
+          "ticketing system /ˈtɪk.ɪ.tɪŋ ˈsɪs.təm/ (n): hệ thống bán vé",
+          "entrance /ˈen.trəns/ (n): lối vào, cổng chính",
+          "touch screen /ˈtʌtʃ skriːn/ (n): màn hình cảm ứng",
+          "purchase /ˈpɜː.tʃəs/ (v): mua, thanh toán",
+          "convenience /kənˈviː.ni.əns/ (n): sự tiện lợi, thuận tiện",
+          "instruction /ɪnˈstrʌk.ʃən/ (n): lời chỉ dẫn, hướng dẫn",
+          "a wide variety of /ə waɪd vəˈraɪ.ə.ti əv/ (idiom): đa dạng nhiều loại",
+          "assistance /əˈsɪs.təns/ (n): sự giúp đỡ, hỗ trợ",
+          "representative /ˌrep.rɪˈzen.tə.tɪv/ (n): người đại diện, nhân viên"
+        ]
       },
       {
         id: 5,
@@ -70,8 +125,19 @@ const daysData = {
           { id: 'D', textEN: "Airplane engines", textVN: "Động cơ máy bay" }
         ],
         correctAnswer: 'D',
-        transcriptEN: "In business news, one of the world's largest manufacturers of aircraft engines, Quick Star, has been contracted to supply engines for the new SW20 airplane. In order to be able to produce the large number of engines required by the contract, Quick Star is planning to open another manufacturing plant at the beginning of September.",
-        transcriptVN: "Trong bản tin kinh doanh: Một trong những nhà sản xuất động cơ máy bay lớn nhất thế giới – công ty Quick Star – đã ký hợp đồng cung cấp động cơ cho dòng máy bay mới SW20. Để đáp ứng số lượng động cơ lớn theo hợp đồng, Quick Star dự định mở thêm một nhà máy sản xuất mới vào đầu tháng Chín."
+        transcriptEN: "In business news, <span class=\"highlight-answer\">one of the world's largest manufacturers of aircraft engines, Quick Star, has been contracted to supply engines for the new SW20 airplane</span>. In order to be able to produce the large number of engines required by the contract, Quick Star is planning to open another manufacturing plant at the beginning of September.",
+        transcriptVN: "Trong bản tin kinh doanh: <span class=\"highlight-answer\">Một trong những nhà sản xuất động cơ máy bay lớn nhất thế giới – công ty Quick Star – đã ký hợp đồng cung cấp động cơ cho dòng máy bay mới SW20</span>. Để đáp ứng số lượng động cơ lớn theo hợp đồng, Quick Star dự định mở thêm một nhà máy sản xuất mới vào đầu tháng Chín.",
+        vocabulary: [
+          "manufacturer /ˌmæn.jəˈfæk.tʃər.ər/ (n): nhà sản xuất",
+          "aircraft engine /ˈeə.krɑːft ˈen.dʒɪn/ (n): động cơ máy bay",
+          "contract /kənˈtrækt/ (v, n): ký hợp đồng, hợp đồng",
+          "supply /səˈplaɪ/ (v): cung cấp, cung ứng",
+          "in order to /ɪn ˈɔː.dər tuː/ (prep): để, nhằm mục đích",
+          "produce /prəˈdjuːs/ (v): sản xuất, tạo ra",
+          "required /rɪˈkwaɪəd/ (adj): được yêu cầu, theo quy định",
+          "manufacturing plant /ˌmæn.jəˈfæk.tʃər.ɪŋ plɑːnt/ (n): nhà máy chế tạo",
+          "beginning /bɪˈɡɪn.ɪŋ/ (n): đầu, thời điểm bắt đầu"
+        ]
       },
       {
         id: 6,
@@ -84,8 +150,18 @@ const daysData = {
           { id: 'D', textEN: "Driver safety", textVN: "Độ an toàn khi lái xe" }
         ],
         correctAnswer: 'C',
-        transcriptEN: "Hi, Franklin, it’s Saleisha. I just took a look at our taxi company’s online ratings, and the results were pretty disappointing. Customers had complaints about a variety of things, but apparently the biggest issue seems to be that our drivers just aren’t very friendly. That’s not good for business.",
-        transcriptVN: "Chào Franklin, tôi là Saleisha. Tôi vừa xem qua đánh giá trực tuyến của công ty taxi chúng ta và kết quả khá đáng thất vọng. Khách hàng phàn nàn về nhiều điều, nhưng có vẻ vấn đề lớn nhất là tài xế của chúng ta không được thân thiện cho lắm. Điều đó không tốt cho việc kinh doanh đâu."
+        transcriptEN: "Hi, Franklin, it’s Saleisha. I just took a look at our taxi company’s online ratings, and the results were pretty disappointing. Customers had complaints about a variety of things, but <span class=\"highlight-answer\">apparently the biggest issue seems to be that our drivers just aren’t very friendly</span>. That’s not good for business.",
+        transcriptVN: "Chào Franklin, tôi là Saleisha. Tôi vừa xem qua đánh giá trực tuyến của công ty taxi chúng ta và kết quả khá đáng thất vọng. Khách hàng phàn nàn về nhiều điều, nhưng <span class=\"highlight-answer\">có vẻ vấn đề lớn nhất là tài xế của chúng ta không được thân thiện cho lắm</span>. Điều đó không tốt cho việc kinh doanh đâu.",
+        vocabulary: [
+          "rating /ˈreɪ.tɪŋ/ (n): điểm đánh giá, xếp hạng",
+          "disappointing /ˌdɪs.əˈpɔɪn.tɪŋ/ (adj): đáng thất vọng",
+          "complaint /kəmˈpleɪnt/ (n): lời phàn nàn, khiếu nại",
+          "a variety of /ə vəˈraɪ.ə.ti əv/ (idiom): nhiều thứ khác nhau",
+          "apparently /əˈpær.ənt.li/ (adv): rõ ràng là, có vẻ như",
+          "issue /ˈɪʃ.uː/ (n): vấn đề",
+          "driver /ˈdraɪ.vər/ (n): tài xế, người lái xe",
+          "friendly /ˈfrend.li/ (adj): thân thiện, cởi mở"
+        ]
       },
       {
         id: 7,
@@ -98,8 +174,22 @@ const daysData = {
           { id: 'D', textEN: "Sales", textVN: "Bán hàng" }
         ],
         correctAnswer: 'A',
-        transcriptEN: "We’ve talked about the minor repairs and upgrades you will be making at the museum. Now, let’s turn our attention to the work you’ll do monitoring the thermostats in each gallery. Environmental control is extremely important to the museum, as changes in temperature and humidity can damage the artworks.",
-        transcriptVN: "Chúng ta vừa nói về những sửa chữa và nâng cấp nhỏ mà các bạn sẽ thực hiện tại bảo tàng. Bây giờ, hãy chú ý đến công việc giám sát máy điều chỉnh nhiệt độ trong từng phòng trưng bày. Kiểm soát môi trường là cực kỳ quan trọng với bảo tàng, vì sự thay đổi về nhiệt độ và độ ẩm có thể làm hư hỏng các tác phẩm nghệ thuật."
+        transcriptEN: "<span class=\"highlight-answer\">We’ve talked about the minor repairs and upgrades you will be making at the museum</span>. Now, let’s turn our attention to the work you’ll do monitoring the thermostats in each gallery. Environmental control is extremely important to the museum, as changes in temperature and humidity can damage the artworks.",
+        transcriptVN: "<span class=\"highlight-answer\">Chúng ta vừa nói về những sửa chữa và nâng cấp nhỏ mà các bạn sẽ thực hiện tại bảo tàng</span>. Bây giờ, hãy chú ý đến công việc giám sát máy điều chỉnh nhiệt độ trong từng phòng trưng bày. Kiểm soát môi trường là cực kỳ quan trọng với bảo tàng, vì sự thay đổi về nhiệt độ và độ ẩm có thể làm hư hỏng các tác phẩm nghệ thuật.",
+        vocabulary: [
+          "minor repair /ˈmaɪ.nər rɪˈpeər/ (n): sửa chữa nhỏ",
+          "upgrade /ˈʌp.ɡreɪd/ (n, v): nâng cấp",
+          "museum /mjuːˈziː.əm/ (n): bảo tàng",
+          "turn attention to /tɜːn əˈten.ʃən tuː/ (phr v): chuyển sự chú ý sang",
+          "monitor /ˈmɒn.ɪ.tər/ (v): giám sát, theo dõi",
+          "thermostat /ˈθɜː.mə.stæt/ (n): máy/thiết bị điều chỉnh nhiệt độ",
+          "gallery /ˈɡæl.ər.i/ (n): phòng trưng bày",
+          "environmental control /ɪnˌvaɪ.rənˈmen.təl kənˈtrəʊl/ (n): kiểm soát môi trường",
+          "temperature /ˈtem.prə.tʃər/ (n): nhiệt độ",
+          "humidity /hjuːˈmɪd.ə.ti/ (n): độ ẩm",
+          "damage /ˈdæm.ɪdʒ/ (v): gây hư hại, làm hỏng",
+          "artwork /ˈɑːt.wɜːk/ (n): tác phẩm nghệ thuật"
+        ]
       },
       {
         id: 8,
@@ -112,8 +202,22 @@ const daysData = {
           { id: 'D', textEN: "Designing advertisements", textVN: "Thiết kế quảng cáo" }
         ],
         correctAnswer: 'C',
-        transcriptEN: "Welcome to this workshop on developing a business plan. Let’s start with a simple explanation of what that is. A business plan is a statement that describes your goals and how you plan to achieve them. A well-written business plan makes a good impression, and this is important for getting financial support from people willing to invest in your company.",
-        transcriptVN: "Chào mừng các bạn đến với buổi hội thảo về lập kế hoạch kinh doanh. Trước tiên, chúng ta hãy cùng tìm hiểu khái niệm cơ bản: kế hoạch kinh doanh là một bản trình bày các mục tiêu và cách bạn sẽ đạt được chúng. Một kế hoạch được viết tốt sẽ tạo ấn tượng tích cực – điều rất quan trọng để thu hút nguồn đầu tư tài chính từ những người sẵn sàng hỗ trợ công ty bạn."
+        transcriptEN: "<span class=\"highlight-answer\">Welcome to this workshop on developing a business plan</span>. Let’s start with a simple explanation of what that is. <span class=\"highlight-answer\">A business plan is a statement that describes your goals and how you plan to achieve them</span>. A well-written business plan makes a good impression, and this is important for getting financial support from people willing to invest in your company.",
+        transcriptVN: "<span class=\"highlight-answer\">Chào mừng các bạn đến với buổi hội thảo về lập kế hoạch kinh doanh</span>. Trước tiên, chúng ta hãy cùng tìm hiểu khái niệm cơ bản: <span class=\"highlight-answer\">kế hoạch kinh doanh là một bản trình bày các mục tiêu và cách bạn sẽ đạt được chúng</span>. Một kế hoạch được viết tốt sẽ tạo ấn tượng tích cực – điều rất quan trọng để thu hút nguồn đầu tư tài chính từ những người sẵn sàng hỗ trợ công ty bạn.",
+        vocabulary: [
+          "workshop /ˈwɜːk.ʃɒp/ (n): buổi hội thảo, tập huấn",
+          "develop /dɪˈvel.əp/ (v): phát triển, xây dựng",
+          "business plan /ˈbɪz.nɪs plæn/ (n): kế hoạch kinh doanh",
+          "explanation /ˌek.spləˈneɪ.ʃən/ (n): lời giải thích, khái niệm",
+          "statement /ˈsteɪt.mənt/ (n): bản tuyên bố, bản trình bày",
+          "describe /dɪˈskraɪb/ (v): mô tả",
+          "goal /ɡəʊl/ (n): mục tiêu",
+          "achieve /əˈtʃiːv/ (v): đạt được, gặt hái",
+          "impression /ɪmˈpreʃ.ən/ (n): ấn tượng",
+          "financial support /faɪˈnæn.ʃəl səˈpɔːt/ (n): hỗ trợ/đầu tư tài chính",
+          "willing to /ˈwɪl.ɪŋ tuː/ (adj): sẵn lòng, sẵn sàng",
+          "invest /ɪnˈvest/ (v): đầu tư"
+        ]
       }
     ]
   },

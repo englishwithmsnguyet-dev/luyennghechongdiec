@@ -571,6 +571,38 @@ function renderQuestions(questions, container, practiceId) {
         const displayEN = hasMarkers ? `<span class="highlight-answer">${formattedEN}</span>` : formattedEN;
         const displayVN = hasMarkers ? `<span class="highlight-answer">${formattedVN}</span>` : formattedVN;
         
+        let usefulVocabHtml = '';
+        if (q.vocabulary && q.vocabulary.length > 0) {
+            const vocabListItems = q.vocabulary.map(v => {
+                const match = v.match(/^([^/(:]+)(.*)$/);
+                if (match) {
+                    const wordPart = match[1].trim();
+                    const restPart = match[2] || '';
+                    return `
+                        <div class="vocab-item">
+                            <button class="btn-speak-vocab" onclick="window.speakWord('${wordPart.replace(/'/g, "\\'")}')" title="Nghe đọc mẫu">
+                                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                                    <path d="M12 3L6.5 8H2V16H6.5L12 21V3ZM16.5 12C16.5 10.23 15.48 8.71 14 8V16C15.48 15.29 16.5 13.77 16.5 12ZM14 3.23V5.29C16.89 6.15 19 8.83 19 12C19 15.17 16.89 17.85 14 18.71V20.77C18.01 19.86 21 16.28 21 12C21 7.72 18.01 4.14 14 3.23Z"/>
+                                </svg>
+                            </button>
+                            <div class="vocab-text">
+                                - <strong>${wordPart}</strong> ${restPart}
+                            </div>
+                        </div>
+                    `;
+                }
+                return `<div class="vocab-item"><div class="vocab-text">- ${v}</div></div>`;
+            }).join('');
+
+            usefulVocabHtml = `
+                <div class="vocab-divider"></div>
+                <h4 class="vocab-heading">TỪ VỰNG HỮU ÍCH</h4>
+                <div class="vocab-list">
+                    ${vocabListItems}
+                </div>
+            `;
+        }
+
         explanationSection.innerHTML = `
             <button class="btn-explain" onclick="toggleExplanation(${q.id}, \'${practiceId}\')">
                 <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -579,8 +611,11 @@ function renderQuestions(questions, container, practiceId) {
                 ${hasHighlights ? 'Giải thích chi tiết (Khoanh vùng đáp án)' : 'Giải thích chi tiết'}
             </button>
             <div id="exp-content-${q.id}" class="explanation-content hidden">
-                <p class="transcript-en"><strong>${labelEN}</strong><br>${displayEN}</p>
-                <p class="transcript-vn"><strong>${labelVN}</strong><br>${displayVN}</p>
+                <h4 class="exp-heading">TIẾNG ANH</h4>
+                <div class="transcript-box text-en">${displayEN}</div>
+                <h4 class="exp-heading">TIẾNG VIỆT</h4>
+                <div class="transcript-box text-vi">${displayVN}</div>
+                ${usefulVocabHtml}
             </div>
         `;
 
@@ -623,6 +658,32 @@ function toggleExplanation(questionId) {
         el.classList.toggle('hidden');
     }
 }
+
+window.speakWord = function(word) {
+    if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        let cleanWord = word.split('/')[0].split(',')[0].trim();
+        cleanWord = cleanWord.replace(/\([^)]*\)/g, '').trim();
+        cleanWord = cleanWord.replace(/[^\w\s\-]/g, '').trim();
+
+        if (!cleanWord) return;
+
+        const utterance = new SpeechSynthesisUtterance(cleanWord);
+        utterance.lang = 'en-US';
+        utterance.rate = 0.9;
+
+        const voices = window.speechSynthesis.getVoices();
+        const priorities = ["Google US English", "Ava", "Allison", "Siri", "Samantha", "Victoria"];
+        for (const name of priorities) {
+            const found = voices.find(v => v.name.includes(name) && v.lang.startsWith('en'));
+            if (found) {
+                utterance.voice = found;
+                break;
+            }
+        }
+        window.speechSynthesis.speak(utterance);
+    }
+};
 
 function toggleFullTranscript(practiceId) {
     const el = document.getElementById(`full-trans-${practiceId}`);
