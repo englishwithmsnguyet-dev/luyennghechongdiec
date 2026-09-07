@@ -956,7 +956,7 @@ function removeAccents(str) {
 function isAuthorizedStudent(name) {
     const norm = normalizeName(name);
     const noAcc = removeAccents(name);
-    if (norm === 'ptmn') return true;
+    if (norm === 'ptmn' || norm.includes('ptmn') || noAcc.includes('co nguyet')) return true;
     return AUTHORIZED_STUDENTS.some(auth => {
         return normalizeName(auth) === norm || removeAccents(auth) === noAcc;
     });
@@ -977,16 +977,35 @@ function initLogin() {
     loginOverlay.classList.remove('hidden');
     const savedName = localStorage.getItem('vstep_student_name') || '';
     const savedClass = localStorage.getItem('vstep_student_class') || '';
-    if (studentNameInput && savedName) studentNameInput.value = savedName;
-    if (studentClassInput && savedClass) studentClassInput.value = savedClass;
-    if (studentPasswordInput) studentPasswordInput.value = '';
+
+    const isTeacherSaved = savedName.toUpperCase().includes('PTMN') || savedName.toLowerCase().includes('cô nguyệt');
+    if (studentNameInput) {
+        studentNameInput.value = isTeacherSaved ? 'PTMN' : savedName;
+    }
+    if (studentClassInput) {
+        studentClassInput.value = isTeacherSaved ? 'GV' : savedClass;
+    }
+    if (studentPasswordInput) {
+        studentPasswordInput.value = isTeacherSaved ? 'GV' : '';
+    }
+
+    if (studentNameInput) {
+        studentNameInput.addEventListener('input', () => {
+            const val = studentNameInput.value.trim().toUpperCase();
+            if (val === 'PTMN' || val.includes('PTMN')) {
+                if (studentClassInput && !studentClassInput.value) studentClassInput.value = 'GV';
+                if (studentPasswordInput && !studentPasswordInput.value) studentPasswordInput.value = 'GV';
+            }
+        });
+    }
+
     if (loginError) {
         loginError.style.display = 'none';
         loginError.textContent = '';
     }
 
     setTimeout(() => {
-        if (studentPasswordInput && savedName && savedClass) {
+        if (studentPasswordInput && savedName && savedClass && !isTeacherSaved) {
             studentPasswordInput.focus();
         } else if (studentNameInput) {
             studentNameInput.focus();
@@ -1010,7 +1029,7 @@ function initLogin() {
             return;
         }
 
-        const isTeacher = nameVal.toUpperCase() === 'PTMN';
+        const isTeacher = nameVal.toUpperCase() === 'PTMN' || nameVal.toUpperCase().includes('PTMN') || nameVal.toLowerCase().includes('cô nguyệt');
 
         if (!isAuthorizedStudent(nameVal)) {
             showLoginError('Họ và tên không nằm trong danh sách học viên lớp CB206!');
@@ -1019,7 +1038,14 @@ function initLogin() {
         }
 
         if (isTeacher) {
-            rawClassVal = rawClassVal || 'GV';
+            rawClassVal = 'GV';
+            // Giáo viên đăng nhập: Không bắt buộc nhập mật khẩu (cho phép để trống, hoặc nhập GV ở ô lớp/mật khẩu)
+            const isTeacherPassValid = !passwordVal || passwordVal.toUpperCase() === 'GV' || passwordVal.toUpperCase() === REQUIRED_PASSWORD;
+            if (!isTeacherPassValid) {
+                showLoginError('Mật khẩu giáo viên không chính xác!');
+                if (studentPasswordInput) studentPasswordInput.focus();
+                return;
+            }
         } else {
             if (!rawClassVal) {
                 showLoginError('Vui lòng nhập Lớp học.');
@@ -1032,25 +1058,21 @@ function initLogin() {
                 if (studentClassInput) studentClassInput.focus();
                 return;
             }
-        }
 
-        if (!passwordVal) {
-            showLoginError('Vui lòng nhập Mật khẩu.');
-            if (studentPasswordInput) studentPasswordInput.focus();
-            return;
-        }
-
-        const isValidPassword = isTeacher 
-            ? (passwordVal.toUpperCase() === 'GV' || passwordVal.toUpperCase() === REQUIRED_PASSWORD)
-            : (passwordVal.toUpperCase() === REQUIRED_PASSWORD);
-
-        if (!isValidPassword) {
-            showLoginError('Mật khẩu không chính xác. Vui lòng kiểm tra lại!');
-            if (studentPasswordInput) {
-                studentPasswordInput.focus();
-                studentPasswordInput.select();
+            if (!passwordVal) {
+                showLoginError('Vui lòng nhập Mật khẩu.');
+                if (studentPasswordInput) studentPasswordInput.focus();
+                return;
             }
-            return;
+
+            if (passwordVal.toUpperCase() !== REQUIRED_PASSWORD) {
+                showLoginError('Mật khẩu không chính xác. Vui lòng kiểm tra lại!');
+                if (studentPasswordInput) {
+                    studentPasswordInput.focus();
+                    studentPasswordInput.select();
+                }
+                return;
+            }
         }
 
         if (loginError) loginError.style.display = 'none';
