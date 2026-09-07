@@ -876,16 +876,25 @@ function initLogin() {
 
     if (!loginOverlay) return;
 
-    const loggedIn = localStorage.getItem('vstep_student_logged_in') || sessionStorage.getItem('vstep_student_logged_in');
-    if (loggedIn === 'true') {
-        loginOverlay.classList.add('hidden');
-    } else {
-        loginOverlay.classList.remove('hidden');
-        const savedName = localStorage.getItem('vstep_student_name') || '';
-        const savedClass = localStorage.getItem('vstep_student_class') || '';
-        if (studentNameInput && savedName) studentNameInput.value = savedName;
-        if (studentClassInput && savedClass) studentClassInput.value = savedClass;
+    // Luôn luôn hiển thị màn hình đăng nhập khi mở hoặc tải lại trang
+    loginOverlay.classList.remove('hidden');
+    const savedName = localStorage.getItem('vstep_student_name') || '';
+    const savedClass = localStorage.getItem('vstep_student_class') || '';
+    if (studentNameInput && savedName) studentNameInput.value = savedName;
+    if (studentClassInput && savedClass) studentClassInput.value = savedClass;
+    if (studentPasswordInput) studentPasswordInput.value = '';
+    if (loginError) {
+        loginError.style.display = 'none';
+        loginError.textContent = '';
     }
+
+    setTimeout(() => {
+        if (studentPasswordInput && savedName && savedClass) {
+            studentPasswordInput.focus();
+        } else if (studentNameInput) {
+            studentNameInput.focus();
+        }
+    }, 150);
 
     function showLoginError(msg) {
         if (!loginError) return;
