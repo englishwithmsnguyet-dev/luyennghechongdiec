@@ -861,7 +861,7 @@ function closeModal() {
 
 // --- Login Logic ---
 const ALLOWED_CLASSES = ['CB196', 'CB201', 'CB202', 'B209'];
-const REQUIRED_PASSWORD = 'VSTEPSEPTEMBER';
+const REQUIRED_PASSWORD = 'PRACTICELISTENING';
 const GOOGLE_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLScU5Jd_R15uECAgsBMHZsqKAaCR2g2K1IzqOGs-ZN9_RbDkdQ/formResponse';
 const GOOGLE_FORM_ENTRY = 'entry.388968236';
 
