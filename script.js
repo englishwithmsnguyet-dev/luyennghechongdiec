@@ -921,26 +921,49 @@ function closeModal() {
 }
 
 // --- Login Logic ---
-const ALLOWED_CLASSES = ['CB206', 'GV'];
+const ALLOWED_CLASSES = ['CB206', 'CB210', 'GV'];
 const REQUIRED_PASSWORD = 'PRACTICELISTENING';
 const GOOGLE_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLScU5Jd_R15uECAgsBMHZsqKAaCR2g2K1IzqOGs-ZN9_RbDkdQ/formResponse';
 const GOOGLE_FORM_ENTRY = 'entry.388968236';
 
+const CLASS_STUDENTS = {
+    'CB206': [
+        'Nguyễn Thị Vân Anh',
+        'Nguyễn Thị Hồng Duyên',
+        'Nguyễn Thị Thúy Hồng',
+        'Trương Ngọc Nhi',
+        'Nguyễn Phạm Như Quỳnh',
+        'Trần Lê Quỳnh',
+        'Ông Lê Thành',
+        'Trần Nguyễn Thanh Thảo',
+        'Phan Nhật Thiện',
+        'Trần Thị Cẩm Tiên',
+        'Võ Trần Bảo Tính',
+        'Trương Thanh Toàn',
+        'Phạm Ngọc Trâm',
+        'Nguyễn Võ Bảo Trân'
+    ],
+    'CB210': [
+        'Nguyễn Võ Thành Đạt',
+        'Lê Huỳnh Thanh Duy',
+        'Nguyễn Cao Kỳ Duyên',
+        'Đào Ngọc Hân',
+        'Trần Văn Hữu',
+        'Trần Văn Kim Khoa',
+        'Nguyễn Thanh Nâng',
+        'Huỳnh Kỳ Nguyên',
+        'Võ Thị Kim Nguyên',
+        'Võ Hùng Sanh',
+        'Tiền Thị Thanh Thảo',
+        'Đặng Thị Kim Thoa',
+        'Trần Thị Tiên Tiên',
+        'Lê Kim Tuyền'
+    ]
+};
+
 const AUTHORIZED_STUDENTS = [
-    'Nguyễn Thị Vân Anh',
-    'Nguyễn Thị Hồng Duyên',
-    'Nguyễn Thị Thúy Hồng',
-    'Trương Ngọc Nhi',
-    'Nguyễn Phạm Như Quỳnh',
-    'Trần Lê Quỳnh',
-    'Ông Lê Thành',
-    'Trần Nguyễn Thanh Thảo',
-    'Phan Nhật Thiện',
-    'Trần Thị Cẩm Tiên',
-    'Võ Trần Bảo Tính',
-    'Trương Thanh Toàn',
-    'Phạm Ngọc Trâm',
-    'Nguyễn Võ Bảo Trân'
+    ...CLASS_STUDENTS['CB206'],
+    ...CLASS_STUDENTS['CB210']
 ];
 
 function normalizeName(str) {
@@ -953,10 +976,17 @@ function removeAccents(str) {
     return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D').toLowerCase().trim().replace(/\s+/g, ' ');
 }
 
-function isAuthorizedStudent(name) {
+function isAuthorizedStudent(name, classVal) {
     const norm = normalizeName(name);
     const noAcc = removeAccents(name);
     if (norm === 'ptmn' || norm.includes('ptmn') || noAcc.includes('co nguyet')) return true;
+
+    if (classVal && CLASS_STUDENTS[classVal]) {
+        return CLASS_STUDENTS[classVal].some(auth => {
+            return normalizeName(auth) === norm || removeAccents(auth) === noAcc;
+        });
+    }
+
     return AUTHORIZED_STUDENTS.some(auth => {
         return normalizeName(auth) === norm || removeAccents(auth) === noAcc;
     });
@@ -1031,12 +1061,6 @@ function initLogin() {
 
         const isTeacher = nameVal.toUpperCase() === 'PTMN' || nameVal.toUpperCase().includes('PTMN') || nameVal.toLowerCase().includes('cô nguyệt');
 
-        if (!isAuthorizedStudent(nameVal)) {
-            showLoginError('Họ và tên không nằm trong danh sách học viên lớp CB206!');
-            if (studentNameInput) studentNameInput.focus();
-            return;
-        }
-
         if (isTeacher) {
             rawClassVal = 'GV';
             // Giáo viên đăng nhập: Không bắt buộc nhập mật khẩu (cho phép để trống, hoặc nhập GV ở ô lớp/mật khẩu)
@@ -1048,14 +1072,20 @@ function initLogin() {
             }
         } else {
             if (!rawClassVal) {
-                showLoginError('Vui lòng nhập Lớp học.');
+                showLoginError('Vui lòng nhập Lớp học (CB206 hoặc CB210).');
                 if (studentClassInput) studentClassInput.focus();
                 return;
             }
 
-            if (rawClassVal !== 'CB206') {
-                showLoginError('Hệ thống hiện chỉ mở cho học viên lớp CB206!');
+            if (!ALLOWED_CLASSES.includes(rawClassVal) || rawClassVal === 'GV') {
+                showLoginError('Hệ thống hiện chỉ mở cho học viên lớp CB206 và CB210!');
                 if (studentClassInput) studentClassInput.focus();
+                return;
+            }
+
+            if (!isAuthorizedStudent(nameVal, rawClassVal)) {
+                showLoginError(`Họ và tên không nằm trong danh sách học viên lớp ${rawClassVal}!`);
+                if (studentNameInput) studentNameInput.focus();
                 return;
             }
 
