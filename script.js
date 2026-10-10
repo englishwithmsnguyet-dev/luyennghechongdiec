@@ -781,7 +781,7 @@ function submitAll(isRestore = false) {
         const percentage = (totalScore / totalQuestions) * 100;
         let message = "";
         if (percentage === 0) {
-            message = "Tớ là Doraemon nè Nobita. Cậu đang áp lực lắm hả? Cố lên nhé, nếu không, Miss Nguyệt đấm cậu đó!";
+            message = "Ôi không, 0 điểm rồi kìa! Mau nghe lại và làm lại ngay nhé, nếu không, Miss Nguyệt đấm cậu đó!";
         } else if (percentage >= 50) {
             message = "Cậu đã làm tốt lắm. Tiếp tục cố gắng nhé!";
         } else {
