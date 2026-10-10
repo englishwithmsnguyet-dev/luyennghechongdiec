@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateProgress();
     loadDay(currentDay);
     initLogin();
+    updateUserProfileBadge();
 });
 
 function initTheme() {
@@ -1005,6 +1006,7 @@ function initLogin() {
 
     // Luôn luôn hiển thị màn hình đăng nhập khi mở hoặc tải lại trang
     loginOverlay.classList.remove('hidden');
+    updateUserProfileBadge();
     const savedName = localStorage.getItem('vstep_student_name') || '';
     const savedClass = localStorage.getItem('vstep_student_class') || '';
 
@@ -1145,6 +1147,7 @@ function initLogin() {
                 btnLogin.textContent = 'BẮT ĐẦU HỌC NGAY';
                 btnLogin.disabled = false;
             }
+            updateUserProfileBadge();
         }, 300);
     }
 
@@ -1161,5 +1164,47 @@ function initLogin() {
             handleLoginSubmit();
         });
     }
+
+    const btnLogout = document.getElementById('btnLogout');
+    if (btnLogout) {
+        btnLogout.addEventListener('click', () => {
+            if (confirm('Bạn có muốn đổi tài khoản học viên khác không?')) {
+                if (loginOverlay) {
+                    loginOverlay.classList.remove('hidden');
+                    updateUserProfileBadge();
+                    if (studentPasswordInput) {
+                        studentPasswordInput.value = '';
+                        studentPasswordInput.focus();
+                    }
+                }
+            }
+        });
+    }
 }
+
+function updateUserProfileBadge() {
+    const badge = document.getElementById('userProfileBadge');
+    const nameEl = document.getElementById('displayUserName');
+    const classEl = document.getElementById('displayUserClass');
+    const loginOverlay = document.getElementById('loginOverlay');
+    if (!badge || !nameEl || !classEl) return;
+
+    // Khi cửa sổ đăng nhập đang mở, ẩn huy hiệu thông tin ở góc
+    if (loginOverlay && !loginOverlay.classList.contains('hidden')) {
+        badge.classList.add('hidden');
+        return;
+    }
+
+    const savedName = localStorage.getItem('vstep_student_name') || '';
+    const savedClass = localStorage.getItem('vstep_student_class') || '';
+
+    if (savedName) {
+        nameEl.textContent = savedName;
+        classEl.textContent = savedClass ? `Lớp: ${savedClass}` : '';
+        badge.classList.remove('hidden');
+    } else {
+        badge.classList.add('hidden');
+    }
+}
+
 
