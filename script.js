@@ -781,11 +781,11 @@ function submitAll(isRestore = false) {
         const percentage = (totalScore / totalQuestions) * 100;
         let message = "";
         if (percentage === 0) {
-            message = "Tới là Doraemon nè Nobita. Cậu đang áp lực lắm hả?";
+            message = "Tớ là Doraemon nè Nobita. Cậu đang áp lực lắm hả? Cố lên nhé, nếu không, Miss Nguyệt đấm bạn đó!";
         } else if (percentage >= 50) {
             message = "Cậu đã làm tốt lắm. Tiếp tục cố gắng nhé!";
         } else {
-            message = "Không sao đâu, miễn là cậu vẫn đang cố gắng! Kiên nhẫn thêm một chút nhé!";
+            message = "Không sao đâu, miễn là cậu vẫn đang cố gắng! Kiên nhẫn thêm một chút nhé! Nếu không, Miss Nguyệt đấm bạn đó!";
         }
         showModal(totalScore, totalQuestions, message);
     }
