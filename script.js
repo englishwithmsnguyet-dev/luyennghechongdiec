@@ -924,8 +924,8 @@ function closeModal() {
 // --- Login Logic ---
 const ALLOWED_CLASSES = ['CB206', 'CB210', 'GV'];
 const REQUIRED_PASSWORD = 'PRACTICELISTENING';
-const GOOGLE_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLScU5Jd_R15uECAgsBMHZsqKAaCR2g2K1IzqOGs-ZN9_RbDkdQ/formResponse';
-const GOOGLE_FORM_ENTRY = 'entry.388968236';
+const GOOGLE_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSe1aPeztsRKWBdl_fG_2HulMol6L9p0EDWPaxzKR69E5vHJcA/formResponse';
+const GOOGLE_FORM_ENTRY = 'entry.1205151935';
 
 const CLASS_STUDENTS = {
     'CB206': [
