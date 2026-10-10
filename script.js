@@ -783,7 +783,7 @@ function submitAll(isRestore = false) {
         if (percentage === 0) {
             message = "Ôi không, 0 điểm rồi kìa! Mau nghe lại và làm lại ngay nhé, nếu không, Miss Nguyệt đấm cậu đó!";
         } else if (percentage >= 50) {
-            message = "Cậu đã làm tốt lắm. Tiếp tục cố gắng nhé!";
+            message = "Cậu đã làm tốt lắm. Tiếp tục cố gắng nhé! Miss Nguyệt khen cậu đó!";
         } else {
             message = "Không sao đâu, miễn là cậu vẫn đang cố gắng! Kiên nhẫn thêm một chút nhé! Nếu không, Miss Nguyệt đấm cậu đó!";
         }
