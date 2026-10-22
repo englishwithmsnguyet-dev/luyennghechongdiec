@@ -922,7 +922,7 @@ function closeModal() {
 }
 
 // --- Login Logic ---
-const ALLOWED_CLASSES = ['CB206', 'CB210', 'GV'];
+const ALLOWED_CLASSES = ['CB206', 'CB210', 'B2', 'GV'];
 const REQUIRED_PASSWORD = 'PRACTICELISTENING';
 const GOOGLE_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSe1aPeztsRKWBdl_fG_2HulMol6L9p0EDWPaxzKR69E5vHJcA/formResponse';
 const GOOGLE_FORM_ENTRY = 'entry.1205151935';
@@ -959,12 +959,16 @@ const CLASS_STUDENTS = {
         'Đặng Thị Kim Thoa',
         'Trần Thị Tiên Tiên',
         'Lê Kim Tuyền'
+    ],
+    'B2': [
+        'Gia Tuệ'
     ]
 };
 
 const AUTHORIZED_STUDENTS = [
     ...CLASS_STUDENTS['CB206'],
-    ...CLASS_STUDENTS['CB210']
+    ...CLASS_STUDENTS['CB210'],
+    ...CLASS_STUDENTS['B2']
 ];
 
 function normalizeName(str) {
@@ -982,15 +986,17 @@ function isAuthorizedStudent(name, classVal) {
     const noAcc = removeAccents(name);
     if (norm === 'ptmn' || norm.includes('ptmn') || noAcc.includes('co nguyet')) return true;
 
+    const matchesName = (auth) => {
+        const authNorm = normalizeName(auth);
+        const authNoAcc = removeAccents(auth);
+        return authNorm === norm || authNoAcc === noAcc || norm.endsWith(' ' + authNorm) || noAcc.endsWith(' ' + authNoAcc);
+    };
+
     if (classVal && CLASS_STUDENTS[classVal]) {
-        return CLASS_STUDENTS[classVal].some(auth => {
-            return normalizeName(auth) === norm || removeAccents(auth) === noAcc;
-        });
+        return CLASS_STUDENTS[classVal].some(matchesName);
     }
 
-    return AUTHORIZED_STUDENTS.some(auth => {
-        return normalizeName(auth) === norm || removeAccents(auth) === noAcc;
-    });
+    return AUTHORIZED_STUDENTS.some(matchesName);
 }
 
 function initLogin() {
@@ -1074,13 +1080,19 @@ function initLogin() {
             }
         } else {
             if (!rawClassVal) {
-                showLoginError('Vui lòng nhập Lớp học (CB206 hoặc CB210).');
+                showLoginError('Vui lòng nhập Lớp học (CB206, CB210 hoặc B2).');
                 if (studentClassInput) studentClassInput.focus();
                 return;
             }
 
-            if (!ALLOWED_CLASSES.includes(rawClassVal) || rawClassVal === 'GV') {
-                showLoginError('Hệ thống hiện chỉ mở cho học viên lớp CB206 và CB210!');
+            if (rawClassVal === 'GV') {
+                showLoginError('Mã lớp GV chỉ dành riêng cho tài khoản Giáo viên (PTMN)!');
+                if (studentClassInput) studentClassInput.focus();
+                return;
+            }
+
+            if (!ALLOWED_CLASSES.includes(rawClassVal)) {
+                showLoginError('Hệ thống hiện chỉ mở cho học viên lớp CB206, CB210 và B2!');
                 if (studentClassInput) studentClassInput.focus();
                 return;
             }
@@ -1118,8 +1130,16 @@ function initLogin() {
         if (isTeacher) {
             displayName = 'Cô Nguyệt (PTMN)';
         } else {
-            const matched = AUTHORIZED_STUDENTS.find(auth => normalizeName(auth) === normalizeName(nameVal) || removeAccents(auth) === removeAccents(nameVal));
-            if (matched) displayName = matched;
+            const matched = AUTHORIZED_STUDENTS.find(auth => {
+                const authNorm = normalizeName(auth);
+                const authNoAcc = removeAccents(auth);
+                const nNorm = normalizeName(nameVal);
+                const nNoAcc = removeAccents(nameVal);
+                return authNorm === nNorm || authNoAcc === nNoAcc || nNorm.endsWith(' ' + authNorm) || nNoAcc.endsWith(' ' + authNoAcc);
+            });
+            if (matched && (normalizeName(nameVal) === normalizeName(matched) || removeAccents(nameVal) === removeAccents(matched))) {
+                displayName = matched;
+            }
         }
 
         localStorage.setItem('vstep_student_name', displayName);
