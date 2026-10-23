@@ -1027,19 +1027,43 @@ function initLogin() {
         studentPasswordInput.value = isTeacherSaved ? 'GV' : '';
     }
 
+    function getVietnamHour() {
+        try {
+            const hourStr = new Intl.DateTimeFormat('en-US', {
+                timeZone: 'Asia/Ho_Chi_Minh',
+                hour: 'numeric',
+                hour12: false
+            }).format(new Date());
+            return parseInt(hourStr, 10) % 24;
+        } catch (e) {
+            return (new Date().getUTCHours() + 7) % 24;
+        }
+    }
+
+    const currentVnHour = getVietnamHour();
+    const isQuietHours = currentVnHour >= 22 || currentVnHour < 5;
+
     if (studentNameInput) {
         studentNameInput.addEventListener('input', () => {
             const val = studentNameInput.value.trim().toUpperCase();
             if (val === 'PTMN' || val.includes('PTMN')) {
                 if (studentClassInput && !studentClassInput.value) studentClassInput.value = 'GV';
                 if (studentPasswordInput && !studentPasswordInput.value) studentPasswordInput.value = 'GV';
+                if (loginError && isQuietHours) {
+                    loginError.style.display = 'none';
+                    loginError.textContent = '';
+                }
             }
         });
     }
 
     if (loginError) {
-        loginError.style.display = 'none';
-        loginError.textContent = '';
+        if (!isTeacherSaved && isQuietHours) {
+            showLoginError('Hệ thống tạm nghỉ từ 22:00 đến 05:00 sáng để học viên nghỉ ngơi. Hãy ngủ sớm và quay lại sau 05:00 sáng nhé! 😴');
+        } else {
+            loginError.style.display = 'none';
+            loginError.textContent = '';
+        }
     }
 
     setTimeout(() => {
@@ -1079,6 +1103,13 @@ function initLogin() {
                 return;
             }
         } else {
+            // Giới hạn thời gian đăng nhập cho học viên: Không cho đăng nhập từ 22:00 đến 05:00 sáng (Giờ Việt Nam)
+            const vnH = getVietnamHour();
+            if (vnH >= 22 || vnH < 5) {
+                showLoginError('Hệ thống tạm nghỉ từ 22:00 đến 05:00 sáng để học viên nghỉ ngơi. Hãy ngủ sớm và quay lại sau 05:00 sáng nhé! 😴');
+                return;
+            }
+
             if (!rawClassVal) {
                 showLoginError('Vui lòng nhập Lớp học (CB206, CB210 hoặc B2).');
                 if (studentClassInput) studentClassInput.focus();
