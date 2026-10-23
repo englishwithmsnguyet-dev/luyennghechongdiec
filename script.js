@@ -1059,7 +1059,7 @@ function initLogin() {
 
     if (loginError) {
         if (!isTeacherSaved && isQuietHours) {
-            showLoginError('Hệ thống tạm nghỉ từ 22:00 đến 05:00 sáng để học viên nghỉ ngơi. Hãy ngủ sớm và quay lại sau 05:00 sáng nhé! 😴');
+            showLoginError('Miss Nguyệt đóng cửa tiễn khách rồi. Hãy ngủ sớm và quay lại sau 05:00 sáng nhé! 😴');
         } else {
             loginError.style.display = 'none';
             loginError.textContent = '';
@@ -1106,7 +1106,7 @@ function initLogin() {
             // Giới hạn thời gian đăng nhập cho học viên: Không cho đăng nhập từ 22:00 đến 05:00 sáng (Giờ Việt Nam)
             const vnH = getVietnamHour();
             if (vnH >= 22 || vnH < 5) {
-                showLoginError('Hệ thống tạm nghỉ từ 22:00 đến 05:00 sáng để học viên nghỉ ngơi. Hãy ngủ sớm và quay lại sau 05:00 sáng nhé! 😴');
+                showLoginError('Miss Nguyệt đóng cửa tiễn khách rồi. Hãy ngủ sớm và quay lại sau 05:00 sáng nhé! 😴');
                 return;
             }
 
