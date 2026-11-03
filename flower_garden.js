@@ -983,13 +983,13 @@
               <span class="tab-icon">🎯</span> Luyện Đề (+10💧)
             </button>
             <button class="quiz-tab-btn" data-tab="benefits">
-              <span class="tab-icon">📊</span> Bảng Lợi Ích (Tra Cứu)
+              <span class="tab-icon">📊</span> Bảng Lợi Ích
             </button>
             <button class="quiz-tab-btn" data-tab="speaking">
-              <span class="tab-icon">🗣️</span> Từ Vựng Speaking (Tra Cứu)
+              <span class="tab-icon">🗣️</span> Từ Vựng Speaking
             </button>
             <button class="quiz-tab-btn" data-tab="writing">
-              <span class="tab-icon">✍️</span> 7 Dạng Thư & 4 Dạng Luận (Tra Cứu)
+              <span class="tab-icon">✍️</span> Dạng Thư & Luận
             </button>
           </div>
 
@@ -1449,6 +1449,30 @@
       const progressBadge = `<span class="quiz-badge quiz-progress-tag" title="Tiến độ làm bài trong danh mục này"><i class="fa-solid fa-list-check"></i> ${progressText}</span>`;
       const noRepeatBadge = `<span class="quiz-badge quiz-norepeat-tag" title="Hệ thống thuật toán đảm bảo không bao giờ trùng lặp câu hỏi"><i class="fa-solid fa-shield-halved"></i> Không trùng lặp ✨</span>`;
 
+      // Dynamically shuffle options so the correct answer is randomly distributed across A, B, C, D
+      const optionsWithMeta = q.options.map((opt, origIdx) => ({
+        text: opt,
+        isCorrect: origIdx === q.answer
+      }));
+
+      // Fisher-Yates shuffle
+      for (let i = optionsWithMeta.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        const temp = optionsWithMeta[i];
+        optionsWithMeta[i] = optionsWithMeta[j];
+        optionsWithMeta[j] = temp;
+      }
+
+      const shuffledOptions = optionsWithMeta.map(o => o.text);
+      const shuffledAnswerIdx = optionsWithMeta.findIndex(o => o.isCorrect);
+
+      const activeQ = {
+        ...q,
+        options: shuffledOptions,
+        answer: shuffledAnswerIdx
+      };
+      this.quizState.currentQuestion = activeQ;
+
       container.innerHTML = `
         <div class="quiz-question-box">
           <div class="quiz-meta-row">
@@ -1459,9 +1483,9 @@
             ${progressBadge}
             ${noRepeatBadge}
           </div>
-          <div class="quiz-prompt">${q.question}</div>
+          <div class="quiz-prompt">${activeQ.question}</div>
           <div class="quiz-options-grid">
-            ${q.options.map((opt, idx) => `
+            ${activeQ.options.map((opt, idx) => `
               <button class="quiz-option-btn" data-idx="${idx}">
                 <span class="option-letter">${String.fromCharCode(65 + idx)}</span>
                 <span class="option-text">${opt}</span>
@@ -1476,7 +1500,7 @@
       btns.forEach(btn => {
         btn.addEventListener('click', () => {
           const selected = parseInt(btn.dataset.idx, 10);
-          this.handleQuizAnswer(q, selected, btns);
+          this.handleQuizAnswer(activeQ, selected, btns);
         });
       });
     },
