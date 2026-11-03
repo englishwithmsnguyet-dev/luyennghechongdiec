@@ -927,6 +927,7 @@ function closeModal() {
 
 // --- Login Logic ---
 const ALLOWED_CLASSES = ['CB206', 'CB210', 'B2', 'GV'];
+const VALID_PASSWORDS = ['STUDYHARD', 'PRACTICELISTENING'];
 const REQUIRED_PASSWORD = 'PRACTICELISTENING';
 const GOOGLE_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSe1aPeztsRKWBdl_fG_2HulMol6L9p0EDWPaxzKR69E5vHJcA/formResponse';
 const GOOGLE_FORM_ENTRY = 'entry.1205151935';
@@ -1100,7 +1101,7 @@ function initLogin() {
         if (isTeacher) {
             rawClassVal = 'GV';
             // Giáo viên đăng nhập: Không bắt buộc nhập mật khẩu (cho phép để trống, hoặc nhập GV ở ô lớp/mật khẩu)
-            const isTeacherPassValid = !passwordVal || passwordVal.toUpperCase() === 'GV' || passwordVal.toUpperCase() === REQUIRED_PASSWORD;
+            const isTeacherPassValid = !passwordVal || passwordVal.toUpperCase() === 'GV' || VALID_PASSWORDS.includes(passwordVal.toUpperCase());
             if (!isTeacherPassValid) {
                 showLoginError('Mật khẩu giáo viên không chính xác!');
                 if (studentPasswordInput) studentPasswordInput.focus();
@@ -1144,7 +1145,7 @@ function initLogin() {
                 return;
             }
 
-            if (passwordVal.toUpperCase() !== REQUIRED_PASSWORD) {
+            if (!VALID_PASSWORDS.includes(passwordVal.toUpperCase())) {
                 showLoginError('Mật khẩu không chính xác. Vui lòng kiểm tra lại!');
                 if (studentPasswordInput) {
                     studentPasswordInput.focus();
