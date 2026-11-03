@@ -779,6 +779,10 @@ function submitAll(isRestore = false) {
     updateProgress();
     
     if (!isRestore) {
+        if (window.FlowerGarden) {
+            const earnedWater = totalScore > 0 ? (totalScore * 2 + 5) : 5;
+            FlowerGarden.addWaterDrops(earnedWater, `Hoàn thành bài luyện nghe Day ${currentDay}`);
+        }
         const percentage = (totalScore / totalQuestions) * 100;
         let message = "";
         if (percentage === 0) {
@@ -1192,6 +1196,9 @@ function initLogin() {
             console.log('Log form error', e);
         }
 
+        if (window.FlowerGarden) {
+            FlowerGarden.updateTitleWithStudentName();
+        }
         setTimeout(() => {
             if (loginOverlay) loginOverlay.classList.add('hidden');
             if (btnLogin) {
