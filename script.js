@@ -46,6 +46,20 @@ function initTheme() {
 function initSidebar() {
     dayList.innerHTML = '';
     
+    // Add Garden tab (#1)
+    const gardenLi = document.createElement('li');
+    gardenLi.className = `day-item garden-nav-item ${currentDay === 'garden' ? 'active' : ''}`;
+    gardenLi.id = 'sidebar-nav-garden';
+    gardenLi.innerHTML = `<span style="font-size:1.15rem; margin-right:6px;">🌱</span><span>CHĂM HOA CHĂM HỌC</span>`;
+    gardenLi.onclick = () => {
+        if (currentDay !== 'garden') {
+            document.querySelectorAll('.day-item').forEach(el => el.classList.remove('active'));
+            gardenLi.classList.add('active');
+            loadDay('garden');
+        }
+    };
+    dayList.appendChild(gardenLi);
+
     // Add Home tab
     const homeLi = document.createElement('li');
     homeLi.className = `day-item ${currentDay === 'home' ? 'active' : ''}`;
@@ -304,6 +318,22 @@ function renderHomePage() {
     if (resetBtn) resetBtn.classList.add('hidden');
 }
 
+function renderGardenPage() {
+    dayBadge.textContent = 'CHĂM HOA CHĂM HỌC';
+    quizContainer.innerHTML = `
+        <div class="garden-dedicated-view" style="max-width: 680px; margin: 0 auto 24px auto;">
+            <div id="garden-container"></div>
+        </div>
+    `;
+    const submitBtn = document.getElementById('submit-btn-all');
+    const resetBtn = document.getElementById('reset-btn-all');
+    if (submitBtn) submitBtn.classList.add('hidden');
+    if (resetBtn) resetBtn.classList.add('hidden');
+    if (window.FlowerGarden) {
+        setTimeout(() => window.FlowerGarden.render(), 100);
+    }
+}
+
 function loadDay(dayId) {
     currentDay = dayId;
     
@@ -317,6 +347,12 @@ function loadDay(dayId) {
     
     const warningBox = document.querySelector('.audio-warning');
     
+    if (dayId === 'garden') {
+        if (warningBox) warningBox.classList.add('hidden');
+        renderGardenPage();
+        return;
+    }
+
     if (dayId === 'home') {
         if (warningBox) warningBox.classList.add('hidden');
         renderHomePage();
