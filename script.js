@@ -319,18 +319,21 @@ function renderHomePage() {
 }
 
 function renderGardenPage() {
-    dayBadge.textContent = 'CHĂM HOA CHĂM HỌC';
-    quizContainer.innerHTML = `
-        <div class="garden-dedicated-view" style="max-width: 680px; margin: 0 auto 24px auto;">
-            <div id="garden-container"></div>
-        </div>
-    `;
+    const quoteCard = document.getElementById('daily-quote-card');
+    if (quoteCard) quoteCard.style.display = 'none';
+    const flowerGardenEl = document.getElementById('flower-garden');
+    if (flowerGardenEl) flowerGardenEl.style.display = 'block';
+
+    quizContainer.innerHTML = '';
+    audioContainer.innerHTML = '';
     const submitBtn = document.getElementById('submit-btn-all');
     const resetBtn = document.getElementById('reset-btn-all');
     if (submitBtn) submitBtn.classList.add('hidden');
     if (resetBtn) resetBtn.classList.add('hidden');
+
     if (window.FlowerGarden) {
-        setTimeout(() => window.FlowerGarden.render(), 100);
+        FlowerGarden.ensureGardenContainerDom();
+        FlowerGarden.render();
     }
 }
 
@@ -346,6 +349,8 @@ function loadDay(dayId) {
     quizContainer.innerHTML = '';
     
     const warningBox = document.querySelector('.audio-warning');
+    const flowerGardenEl = document.getElementById('flower-garden');
+    const quoteCard = document.getElementById('daily-quote-card');
     
     if (dayId === 'garden') {
         if (warningBox) warningBox.classList.add('hidden');
@@ -353,11 +358,15 @@ function loadDay(dayId) {
         return;
     }
 
+    if (flowerGardenEl) flowerGardenEl.style.display = 'none';
+
     if (dayId === 'home') {
+        if (quoteCard) quoteCard.style.display = 'block';
         if (warningBox) warningBox.classList.add('hidden');
         renderHomePage();
         return;
     } else {
+        if (quoteCard) quoteCard.style.display = 'none';
         if (warningBox) warningBox.classList.remove('hidden');
     }
     
