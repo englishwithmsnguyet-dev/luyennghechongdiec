@@ -828,6 +828,9 @@ function submitAll(isRestore = false) {
             const earnedWater = totalScore > 0 ? (totalScore * 2 + 5) : 5;
             FlowerGarden.addWaterDrops(earnedWater, `Hoàn thành bài luyện nghe Day ${currentDay}`);
         }
+        if (window.StreakGuard) {
+            window.StreakGuard.markTodayActivityDone();
+        }
         const percentage = (totalScore / totalQuestions) * 100;
         let message = "";
         if (percentage === 0) {
@@ -1130,7 +1133,8 @@ function initLogin() {
         loginError.style.display = 'block';
     }
 
-    function handleLoginSubmit() {
+    async function handleLoginSubmit() {
+        if (btnLogin && btnLogin.disabled) return;
         const nameVal = studentNameInput ? studentNameInput.value.trim() : '';
         let rawClassVal = studentClassInput ? studentClassInput.value.trim().toUpperCase().replace(/\s+/g, '') : '';
         const passwordVal = studentPasswordInput ? studentPasswordInput.value.trim() : '';
@@ -1202,7 +1206,7 @@ function initLogin() {
 
         if (loginError) loginError.style.display = 'none';
         if (btnLogin) {
-            btnLogin.textContent = 'ĐANG VÀO LỚP...';
+            btnLogin.textContent = isTeacher ? 'ĐANG VÀO LỚP...' : 'ĐANG KIỂM TRA CHUỖI...';
             btnLogin.disabled = true;
         }
 
@@ -1211,16 +1215,36 @@ function initLogin() {
         if (isTeacher) {
             displayName = 'Cô Nguyệt (PTMN)';
         } else {
-            const matched = AUTHORIZED_STUDENTS.find(auth => {
+            const classPool = (CLASS_STUDENTS[rawClassVal] || AUTHORIZED_STUDENTS);
+            const matched = classPool.find(auth => {
                 const authNorm = normalizeName(auth);
                 const authNoAcc = removeAccents(auth);
                 const nNorm = normalizeName(nameVal);
                 const nNoAcc = removeAccents(nameVal);
                 return authNorm === nNorm || authNoAcc === nNoAcc || nNorm.endsWith(' ' + authNorm) || nNoAcc.endsWith(' ' + authNoAcc);
             });
-            if (matched && (normalizeName(nameVal) === normalizeName(matched) || removeAccents(nameVal) === removeAccents(matched))) {
+            if (matched) {
                 displayName = matched;
             }
+        }
+
+        if (window.StreakGuard) {
+            if (isTeacher) {
+                window.StreakGuard.onTeacherLoggedIn();
+            } else {
+                const streakRes = await window.StreakGuard.checkStudentLogin(displayName, rawClassVal);
+                if (!streakRes || !streakRes.allowed) {
+                    if (btnLogin) {
+                        btnLogin.innerHTML = `<span>BẮT ĐẦU HỌC</span> <i class="fa-solid fa-arrow-right"></i>`;
+                        btnLogin.disabled = false;
+                    }
+                    return;
+                }
+            }
+        }
+
+        if (btnLogin) {
+            btnLogin.textContent = 'ĐANG VÀO LỚP...';
         }
 
         localStorage.setItem('vstep_student_name', displayName);
