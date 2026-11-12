@@ -45,6 +45,27 @@
     return /^CĐ\s*-/i.test(String((student && student.classCode) || ''));
   }
 
+  function getCompletedDaysFromStorage() {
+    try {
+      let completedCount = 0;
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (!key || !/^vstep_day_\d+$/.test(key)) continue;
+        const raw = localStorage.getItem(key);
+        if (!raw) continue;
+        const state = JSON.parse(raw);
+        if (!state || typeof state !== 'object') continue;
+        const isCompleted = state.submittedPractices
+          ? Object.values(state.submittedPractices).some((v) => v === true)
+          : Boolean(state.submitted);
+        if (isCompleted) completedCount += 1;
+      }
+      return Math.max(1, completedCount);
+    } catch (e) {
+      return 1;
+    }
+  }
+
   function getTodayVN() {
     try {
       return new Intl.DateTimeFormat('en-CA', {
@@ -410,10 +431,13 @@
         return { allowed: true, unconfigured: true };
       }
 
+      const initialStreak = getCompletedDaysFromStorage();
+
       const res = await callApi({
         action: 'checkLogin',
         name: name,
-        classCode: prefixedClass
+        classCode: prefixedClass,
+        initialStreak: initialStreak
       });
 
       const cacheKey = LS_STREAK_CACHE_PREFIX + this.currentStudent.key;
