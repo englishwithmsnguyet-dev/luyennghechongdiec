@@ -658,9 +658,20 @@ body.dark-mode .streak-student-note {
     color: #dc2626;
 }
 
+.btn-s-edit {
+    background: #ede9fe;
+    border: 1px solid rgba(168, 85, 247, 0.4);
+    color: #7c3aed;
+}
+
 body.dark-mode .btn-s-lock {
     background: rgba(239, 68, 68, 0.18);
     color: #f87171;
+}
+
+body.dark-mode .btn-s-edit {
+    background: rgba(168, 85, 247, 0.18);
+    color: #c084fc;
 }
 
 .streak-floating-toast {
