@@ -312,9 +312,14 @@
                   </select>
                 </label>
               </div>
-              <button type="button" class="btn-s-action btn-s-unlock-keep" id="btn-sa-refresh">
-                <i class="fa-solid fa-arrows-rotate"></i> Tải lại
-              </button>
+              <div style="display:flex;gap:8px;align-items:center;">
+                <button type="button" class="btn-s-action btn-s-unlock" id="btn-sa-sync-form" title="Tự động đọc lịch sử đăng nhập từ Google Form và gộp chuỗi">
+                  <i class="fa-solid fa-arrows-spin"></i> Đồng bộ Google Form
+                </button>
+                <button type="button" class="btn-s-action btn-s-unlock-keep" id="btn-sa-refresh">
+                  <i class="fa-solid fa-arrows-rotate"></i> Tải lại
+                </button>
+              </div>
             </div>
 
             <div class="streak-toolbar">
@@ -365,6 +370,46 @@
       const refreshBtn = document.getElementById('btn-sa-refresh');
       if (refreshBtn) {
         refreshBtn.addEventListener('click', () => this.fetchAndRenderAdminList());
+      }
+
+      const syncFormBtn = document.getElementById('btn-sa-sync-form');
+      if (syncFormBtn) {
+        syncFormBtn.addEventListener('click', async () => {
+          syncFormBtn.disabled = true;
+          const origText = syncFormBtn.innerHTML;
+          syncFormBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang gộp dữ liệu...';
+
+          let res = await callApi({
+            action: 'syncFromForm',
+            adminKey: TEACHER_ADMIN_KEY
+          });
+
+          if (res && !res.ok && res.error && res.error.includes('Chưa tìm thấy sheet')) {
+            const extUrl = prompt(
+              'Chưa tìm thấy sheet "Câu trả lời biểu mẫu" trong file này.\n\n' +
+              'Nếu Google Form của cô lưu kết quả ở một file Google Sheet khác, cô hãy dán đường link (URL) của file Google Sheet đó vào đây để hệ thống tự động gộp nhé:',
+              ''
+            );
+            if (extUrl && extUrl.trim()) {
+              syncFormBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang gộp từ link ngoài...';
+              res = await callApi({
+                action: 'syncFromForm',
+                adminKey: TEACHER_ADMIN_KEY,
+                formSheetUrl: extUrl.trim()
+              });
+            }
+          }
+
+          syncFormBtn.disabled = false;
+          syncFormBtn.innerHTML = origText;
+
+          if (res && res.ok) {
+            alert(res.message || `Đã tự động gộp thành công ${res.totalSynced || 0} học viên từ Google Form!`);
+            await this.fetchAndRenderAdminList();
+          } else if (res && res.error) {
+            alert('Thông báo: ' + res.error);
+          }
+        });
       }
 
       const scopeEl = document.getElementById('sa-cfg-scope');
