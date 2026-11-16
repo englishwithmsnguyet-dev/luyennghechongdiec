@@ -955,6 +955,20 @@ function showModal(score, total, message) {
     const modal = document.getElementById('result-modal');
     if (!modal) return;
     
+    // Hiển thị tên học viên, lớp, DAY
+    const savedName = localStorage.getItem('vstep_student_name') || 'Học viên';
+    const savedClass = localStorage.getItem('vstep_student_class') || '--';
+    const rawDayNum = String(currentDay || '').replace(/\D+/g, '');
+    const dayStr = rawDayNum ? `DAY ${rawDayNum.padStart(2, '0')}` : ((daysData[currentDay] && daysData[currentDay].title) || 'DAY');
+
+    const dayTextEl = document.getElementById('modal-day-text');
+    const nameEl = document.getElementById('modal-student-name');
+    const classEl = document.getElementById('modal-student-class');
+
+    if (dayTextEl) dayTextEl.textContent = dayStr;
+    if (nameEl) nameEl.textContent = savedName;
+    if (classEl) classEl.textContent = `LỚP: ${savedClass}`;
+
     document.getElementById('modal-score').textContent = score;
     document.getElementById('modal-total').textContent = '/' + total;
     document.getElementById('modal-message').textContent = message;
