@@ -11,6 +11,108 @@ const dayList = document.getElementById('day-list');
 const audioContainer = document.getElementById('audio-container');
 const dayBadge = document.getElementById('day-badge');
 
+// --- Exercise Time Tracking State & Logic ---
+let daySessionStartTime = null;
+let daySessionAudioSeconds = 0;
+let dayLiveTimerInterval = null;
+let lastAudioPlaybackTimestamp = null;
+let isDaySubmitted = false;
+
+function formatTimerDigits(totalSeconds) {
+    const sec = Math.max(0, Math.floor(totalSeconds));
+    const mins = Math.floor(sec / 60);
+    const remainingSecs = sec % 60;
+    return `${String(mins).padStart(2, '0')}:${String(remainingSecs).padStart(2, '0')}`;
+}
+
+function formatTimerHuman(totalSeconds) {
+    const sec = Math.max(0, Math.floor(totalSeconds));
+    const mins = Math.floor(sec / 60);
+    const remainingSecs = sec % 60;
+    if (mins === 0) {
+        return `${remainingSecs} giây`;
+    }
+    return `${mins} phút ${remainingSecs < 10 ? '0' : ''}${remainingSecs} giây`;
+}
+
+function updateLiveTimerUI() {
+    if (!daySessionStartTime || isDaySubmitted) return;
+    const now = Date.now();
+    const elapsedSec = Math.floor((now - daySessionStartTime) / 1000);
+    const liveTimerEl = document.getElementById('live-timer-text');
+    const liveAudioEl = document.getElementById('live-audio-timer-text');
+    if (liveTimerEl) liveTimerEl.textContent = formatTimerDigits(elapsedSec);
+    if (liveAudioEl) liveAudioEl.textContent = formatTimerDigits(daySessionAudioSeconds);
+}
+
+function startDayTimer() {
+    stopDayTimer();
+    daySessionStartTime = Date.now();
+    daySessionAudioSeconds = 0;
+    isDaySubmitted = false;
+    lastAudioPlaybackTimestamp = null;
+    
+    const timerBar = document.getElementById('exercise-timer-bar');
+    if (timerBar) {
+        timerBar.classList.remove('hidden');
+        timerBar.innerHTML = `
+            <div class="timer-pill timer-pill-exercise">
+                <i class="fa-solid fa-stopwatch"></i>
+                <span>Thời gian làm bài: <strong id="live-timer-text">00:00</strong></span>
+            </div>
+            <div class="timer-pill timer-pill-audio">
+                <i class="fa-solid fa-headphones"></i>
+                <span>Đã nghe audio: <strong id="live-audio-timer-text">00:00</strong></span>
+            </div>
+        `;
+    }
+    updateLiveTimerUI();
+    dayLiveTimerInterval = setInterval(updateLiveTimerUI, 1000);
+}
+
+function stopDayTimer() {
+    if (dayLiveTimerInterval) {
+        clearInterval(dayLiveTimerInterval);
+        dayLiveTimerInterval = null;
+    }
+}
+
+// Global Audio Playback Tracking
+document.addEventListener('play', (e) => {
+    if (e.target && e.target.tagName === 'AUDIO') {
+        lastAudioPlaybackTimestamp = Date.now();
+    }
+}, true);
+
+document.addEventListener('pause', (e) => {
+    if (e.target && e.target.tagName === 'AUDIO') {
+        if (lastAudioPlaybackTimestamp && !isDaySubmitted) {
+            const now = Date.now();
+            const delta = (now - lastAudioPlaybackTimestamp) / 1000;
+            if (delta > 0 && delta < 5) {
+                daySessionAudioSeconds += delta;
+            }
+        }
+        lastAudioPlaybackTimestamp = null;
+        updateLiveTimerUI();
+    }
+}, true);
+
+document.addEventListener('timeupdate', (e) => {
+    if (e.target && e.target.tagName === 'AUDIO') {
+        if (isDaySubmitted) return;
+        const now = Date.now();
+        if (lastAudioPlaybackTimestamp) {
+            const delta = (now - lastAudioPlaybackTimestamp) / 1000;
+            if (delta > 0 && delta < 2.5) {
+                daySessionAudioSeconds += delta;
+            }
+        }
+        lastAudioPlaybackTimestamp = now;
+        updateLiveTimerUI();
+    }
+}, true);
+
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
     initTheme();
@@ -349,10 +451,13 @@ function loadDay(dayId) {
     quizContainer.innerHTML = '';
     
     const warningBox = document.querySelector('.audio-warning');
+    const timerBar = document.getElementById('exercise-timer-bar');
     const flowerGardenEl = document.getElementById('flower-garden');
     const quoteCard = document.getElementById('daily-quote-card');
     
     if (dayId === 'garden') {
+        stopDayTimer();
+        if (timerBar) timerBar.classList.add('hidden');
         if (warningBox) warningBox.classList.add('hidden');
         renderGardenPage();
         return;
@@ -361,6 +466,8 @@ function loadDay(dayId) {
     if (flowerGardenEl) flowerGardenEl.style.display = 'none';
 
     if (dayId === 'home') {
+        stopDayTimer();
+        if (timerBar) timerBar.classList.add('hidden');
         if (quoteCard) quoteCard.style.display = 'block';
         if (warningBox) warningBox.classList.add('hidden');
         renderHomePage();
@@ -500,6 +607,33 @@ function loadDay(dayId) {
     quizContainer.appendChild(actionsDiv);
 
     
+    // Kiểm tra xem Day này đã nộp bài trước đó hay chưa
+    let isPrevSubmitted = false;
+    let savedDayState = null;
+    try {
+        const raw = localStorage.getItem(`vstep_day_${dayId}`);
+        if (raw) savedDayState = JSON.parse(raw);
+        if (savedDayState && savedDayState.submitted) isPrevSubmitted = true;
+    } catch(e) {}
+
+    if (isPrevSubmitted) {
+        isDaySubmitted = true;
+        stopDayTimer();
+        if (timerBar) {
+            timerBar.classList.remove('hidden');
+            const spentStr = savedDayState && typeof savedDayState.timeSpent === 'number' ? formatTimerHuman(savedDayState.timeSpent) : '--';
+            const audioStr = savedDayState && typeof savedDayState.audioTime === 'number' ? formatTimerDigits(savedDayState.audioTime) : '--';
+            timerBar.innerHTML = `
+                <div class="timer-pill timer-pill-submitted">
+                    <i class="fa-solid fa-circle-check"></i>
+                    <span>Đã nộp bài: <strong>${spentStr}</strong> (Nghe audio: <strong>${audioStr}</strong>)</span>
+                </div>
+            `;
+        }
+    } else {
+        startDayTimer();
+    }
+
     // Scroll to top smoothly
     window.scrollTo({ top: 0, behavior: 'smooth' });
     
@@ -818,8 +952,30 @@ function submitAll(isRestore = false) {
     if (submitBtn) submitBtn.classList.add('hidden');
     if (resetBtn) resetBtn.classList.remove('hidden');
     
+    // Calculate final time elapsed and audio time
+    const totalElapsedSeconds = daySessionStartTime ? Math.max(1, Math.floor((Date.now() - daySessionStartTime) / 1000)) : 0;
+    const recordedAudioSec = Math.floor(daySessionAudioSeconds);
+    isDaySubmitted = true;
+    stopDayTimer();
+
     // Save state to localStorage
-    localStorage.setItem(`vstep_day_${currentDay}`, JSON.stringify({ submitted: true }));
+    localStorage.setItem(`vstep_day_${currentDay}`, JSON.stringify({
+        submitted: true,
+        timeSpent: totalElapsedSeconds,
+        audioTime: recordedAudioSec,
+        submittedAt: new Date().toISOString()
+    }));
+
+    const timerBar = document.getElementById('exercise-timer-bar');
+    if (timerBar) {
+        timerBar.classList.remove('hidden');
+        timerBar.innerHTML = `
+            <div class="timer-pill timer-pill-submitted">
+                <i class="fa-solid fa-circle-check"></i>
+                <span>Đã nộp bài: <strong>${formatTimerHuman(totalElapsedSeconds)}</strong> (Nghe audio: <strong>${formatTimerDigits(recordedAudioSec)}</strong>)</span>
+            </div>
+        `;
+    }
     
     updateProgress();
     
@@ -840,7 +996,7 @@ function submitAll(isRestore = false) {
         } else {
             message = "Không sao đâu, miễn là cậu vẫn đang cố gắng! Kiên nhẫn thêm một chút nhé! Nếu không, Miss Nguyệt đấm cậu đó!";
         }
-        showModal(totalScore, totalQuestions, message);
+        showModal(totalScore, totalQuestions, message, totalElapsedSeconds, recordedAudioSec);
     }
 }
 
@@ -900,6 +1056,7 @@ function resetAll() {
     localStorage.removeItem(`vstep_day_${currentDay}`);
     
     updateProgress();
+    startDayTimer();
 }
 
 function loadState() {
@@ -951,7 +1108,7 @@ function updateProgress() {
     if (fillEl) fillEl.style.width = `${percentage}%`;
 }
 
-function showModal(score, total, message) {
+function showModal(score, total, message, timeSpent, audioTime) {
     const modal = document.getElementById('result-modal');
     if (!modal) return;
     
@@ -972,6 +1129,48 @@ function showModal(score, total, message) {
     document.getElementById('modal-score').textContent = score;
     document.getElementById('modal-total').textContent = '/' + total;
     document.getElementById('modal-message').textContent = message;
+
+    // Hiển thị thời gian làm bài & thời lượng nghe audio thực tế
+    let finalTimeSpent = typeof timeSpent === 'number' ? timeSpent : null;
+    let finalAudioTime = typeof audioTime === 'number' ? audioTime : null;
+    if (finalTimeSpent === null) {
+        try {
+            const savedState = JSON.parse(localStorage.getItem(`vstep_day_${currentDay}`) || '{}');
+            if (typeof savedState.timeSpent === 'number') finalTimeSpent = savedState.timeSpent;
+            if (typeof savedState.audioTime === 'number') finalAudioTime = savedState.audioTime;
+        } catch(e) {}
+    }
+
+    const timeSpentEl = document.getElementById('modal-time-spent');
+    const audioTimeEl = document.getElementById('modal-audio-time');
+    const warningEl = document.getElementById('modal-time-warning');
+    const validEl = document.getElementById('modal-time-valid');
+
+    if (timeSpentEl) {
+        timeSpentEl.textContent = finalTimeSpent !== null ? formatTimerHuman(finalTimeSpent) : '--';
+    }
+    if (audioTimeEl) {
+        audioTimeEl.textContent = finalAudioTime !== null ? formatTimerDigits(finalAudioTime) : '--';
+    }
+
+    if (finalTimeSpent !== null) {
+        // Cảnh báo đối phó: Làm bài dưới 60 giây hoặc nghe audio dưới 15 giây
+        const isRushed = finalTimeSpent < 60 || (finalAudioTime !== null && finalAudioTime < 15);
+        if (warningEl && validEl) {
+            if (isRushed) {
+                warningEl.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> <span>Cảnh báo: Làm bài quá nhanh (${formatTimerHuman(finalTimeSpent)})! Có dấu hiệu chọn bừa đối phó mà chưa nghe kỹ audio.</span>`;
+                warningEl.classList.remove('hidden');
+                validEl.classList.add('hidden');
+            } else {
+                validEl.innerHTML = `<i class="fa-solid fa-circle-check"></i> <span>Thời gian làm bài hợp lệ (${formatTimerHuman(finalTimeSpent)})</span>`;
+                validEl.classList.remove('hidden');
+                warningEl.classList.add('hidden');
+            }
+        }
+    } else {
+        if (warningEl) warningEl.classList.add('hidden');
+        if (validEl) validEl.classList.add('hidden');
+    }
     
     const retryBtn = document.getElementById('modal-retry-btn');
     retryBtn.onclick = () => {

@@ -12,7 +12,7 @@
         <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Main Stylesheet -->
-    <link rel="stylesheet" href="style.css?v=20261116_v27">
+    <link rel="stylesheet" href="style.css?v=20261122_v29">
     <!-- Flower Garden Stylesheet -->
     <link rel="stylesheet" href="flower_garden.css?v=20261105_v20">
     <!-- Streak Guard Stylesheet -->
@@ -87,6 +87,18 @@
                     <div class="audio-warning">
                         <strong><span class="warning-title">LƯU Ý:</span> Chỉ nghe 1 lần duy nhất, không nghe lại, không tua, không chỉnh tốc độ lúc làm bài. Sau khi hoàn thành xong có thể nghe lại nhiều lần.</strong>
                     </div>
+
+                    <!-- Thanh theo dõi thời gian làm bài & thời gian nghe audio thực tế -->
+                    <div class="exercise-timer-bar hidden" id="exercise-timer-bar">
+                        <div class="timer-pill timer-pill-exercise">
+                            <i class="fa-solid fa-stopwatch"></i>
+                            <span>Thời gian làm bài: <strong id="live-timer-text">00:00</strong></span>
+                        </div>
+                        <div class="timer-pill timer-pill-audio">
+                            <i class="fa-solid fa-headphones"></i>
+                            <span>Đã nghe audio: <strong id="live-audio-timer-text">00:00</strong></span>
+                        </div>
+                    </div>
                     
                     <div class="audio-container" id="audio-container">
                         <!-- Audios will be injected here dynamically -->
@@ -123,13 +135,32 @@
         <div class="modal-content">
             <h2>Kết Quả Làm Bài</h2>
             
-            <!-- Thông tin học viên, lớp, DAY -->
+            <!-- Thông tin học viên, lớp, DAY & Thời gian làm bài -->
             <div class="result-student-info-card">
                 <div class="result-day-badge" id="modal-day-badge">
                     <i class="fa-solid fa-headphones"></i> <span id="modal-day-text">DAY 01</span>
                 </div>
                 <div class="result-student-name" id="modal-student-name">Học viên</div>
                 <div class="result-student-class" id="modal-student-class">LỚP: --</div>
+
+                <div class="modal-time-container" id="modal-time-container">
+                    <div class="modal-time-row">
+                        <span><i class="fa-solid fa-stopwatch" style="color: #818cf8;"></i> Thời gian làm bài:</span>
+                        <strong id="modal-time-spent">--</strong>
+                    </div>
+                    <div class="modal-time-row" id="modal-audio-row">
+                        <span><i class="fa-solid fa-headphones" style="color: #38bdf8;"></i> Thời lượng nghe audio:</span>
+                        <strong id="modal-audio-time">--</strong>
+                    </div>
+                    <div id="modal-time-warning" class="modal-time-warning hidden">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        <span>Cảnh báo: Thời gian làm bài quá nhanh! Có dấu hiệu chọn đáp án đối phó.</span>
+                    </div>
+                    <div id="modal-time-valid" class="modal-time-valid hidden">
+                        <i class="fa-solid fa-circle-check"></i>
+                        <span>Thời gian làm bài hợp lệ</span>
+                    </div>
+                </div>
             </div>
 
             <div class="score-display-modal">
@@ -210,7 +241,7 @@
     <!-- Scripts -->
     <script src="data.js?v=13"></script>
     <script src="streak_guard.js?v=20261114_v26"></script>
-    <script src="script.js?v=20261116_v28"></script>
+    <script src="script.js?v=20261122_v29"></script>
 
     <!-- Floating Hashtag Link -->
     <a href="https://www.facebook.com/nguyetpham28" target="_blank" class="floating-tag">#englishwithmissnguyet</a>
