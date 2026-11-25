@@ -12,7 +12,7 @@
         <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Main Stylesheet -->
-    <link rel="stylesheet" href="style.css?v=20261122_v29">
+    <link rel="stylesheet" href="style.css?v=20261124_v31">
     <!-- Flower Garden Stylesheet -->
     <link rel="stylesheet" href="flower_garden.css?v=20261105_v20">
     <!-- Streak Guard Stylesheet -->
@@ -66,6 +66,12 @@
                         <div id="progress-bar-fill" class="progress-bar-fill" style="width: 0%"></div>
                     </div>
                 </div>
+
+                <button type="button" class="btn-history-sidebar" id="btn-sidebar-history" title="Xem lại lịch sử làm bài & ảnh xác nhận">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                    <span>LỊCH SỬ LÀM BÀI</span>
+                    <span class="history-count-badge" id="sidebar-history-count" style="display:none;">0</span>
+                </button>
             </div>
             <ul id="day-list" class="day-list">
                 <!-- Days will be injected here by JS -->
@@ -76,7 +82,13 @@
         <main class="main-content">
             <div class="container">
                 <header class="app-header">
-                    <a href="https://www.facebook.com/nguyetpham28" target="_blank" id="day-badge" class="badge badge-link">ENGLISH WITH MISS NGUYET</a>
+                    <div class="header-badges-wrap">
+                        <a href="https://www.facebook.com/nguyetpham28" target="_blank" id="day-badge" class="badge badge-link">ENGLISH WITH MISS NGUYET</a>
+                        <button type="button" class="btn-history-header" id="btn-header-history" title="Xem lại lịch sử làm bài & ảnh xác nhận">
+                            <i class="fa-solid fa-clock-rotate-left"></i>
+                            <span>LỊCH SỬ LÀM BÀI</span>
+                        </button>
+                    </div>
                     <div class="title-wrapper">
                         <img src="cat.jpg" alt="Mascot" class="mascot-img mascot-left">
                         <h1>VSTEP LISTENING</h1>
@@ -130,9 +142,45 @@
         </main>
     </div>
 
+    <!-- History Modal -->
+    <div id="history-modal" class="history-modal-overlay hidden">
+        <div class="history-modal-card">
+            <button type="button" class="history-close-btn" id="btn-close-history" aria-label="Đóng">&times;</button>
+            <div class="history-modal-header">
+                <div class="history-modal-icon">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                </div>
+                <div>
+                    <h3>LỊCH SỬ LÀM BÀI</h3>
+                    <p>Xem lại kết quả các bài đã nộp & mở lại ảnh xác nhận gửi Miss Nguyệt</p>
+                </div>
+            </div>
+
+            <div class="history-student-bar">
+                <div class="history-student-info">
+                    <span><i class="fa-solid fa-user-graduate"></i> <strong id="hist-student-name">Học viên</strong></span>
+                    <span><i class="fa-solid fa-id-badge"></i> <strong id="hist-student-class">Lớp: --</strong></span>
+                </div>
+                <div class="history-student-count">
+                    Đã nộp: <strong id="hist-total-count">0</strong> bài
+                </div>
+            </div>
+
+            <div class="history-tip-card">
+                <i class="fa-solid fa-camera"></i>
+                <span><strong>Quên chụp ảnh xác nhận lúc nộp bài?</strong> Nhấn nút <strong>"Xem ảnh xác nhận"</strong> ở bất kỳ bài nào bên dưới để mở lại bảng điểm và chụp ảnh màn hình nhé!</span>
+            </div>
+
+            <div class="history-list" id="history-list">
+                <!-- Danh sách bài làm sẽ được JS render -->
+            </div>
+        </div>
+    </div>
+
     <!-- Result Modal -->
     <div id="result-modal" class="modal-overlay hidden">
-        <div class="modal-content">
+        <div class="modal-content" style="position: relative;">
+            <button type="button" class="history-close-btn" onclick="closeModal()" aria-label="Đóng" style="top: 10px; right: 14px;">&times;</button>
             <h2>Kết Quả Làm Bài</h2>
             
             <!-- Thông tin học viên, lớp, DAY & Thời gian làm bài -->
@@ -170,6 +218,9 @@
             <div class="modal-actions">
                 <button class="btn-review" onclick="closeModal()">Xem lại đáp án</button>
                 <button class="btn-retry" id="modal-retry-btn">Làm lại bài này</button>
+                <button type="button" class="btn-history-view-confirm" id="modal-history-btn" onclick="openHistoryModal()" style="margin-top: 6px; width: 100%; justify-content: center;">
+                    <i class="fa-solid fa-clock-rotate-left"></i> Xem tất cả lịch sử làm bài
+                </button>
             </div>
         </div>
     </div>
@@ -241,7 +292,7 @@
     <!-- Scripts -->
     <script src="data.js?v=13"></script>
     <script src="streak_guard.js?v=20261124_v30"></script>
-    <script src="script.js?v=20261122_v29"></script>
+    <script src="script.js?v=20261124_v31"></script>
 
     <!-- Floating Hashtag Link -->
     <a href="https://www.facebook.com/nguyetpham28" target="_blank" class="floating-tag">#englishwithmissnguyet</a>

@@ -121,6 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loadDay(currentDay);
     initLogin();
     updateUserProfileBadge();
+    initHistoryEvents();
 });
 
 function initTheme() {
@@ -628,6 +629,9 @@ function loadDay(dayId) {
                     <i class="fa-solid fa-circle-check"></i>
                     <span>Đã nộp bài: <strong>${spentStr}</strong> (Nghe audio: <strong>${audioStr}</strong>)</span>
                 </div>
+                <button type="button" class="btn-timer-view-confirm" onclick="openDayConfirmationModal('${dayId}')" title="Mở lại ảnh xác nhận kết quả để chụp màn hình gửi cô Nguyệt">
+                    <i class="fa-solid fa-camera"></i> Xem lại ảnh xác nhận
+                </button>
             `;
         }
     } else {
@@ -958,9 +962,22 @@ function submitAll(isRestore = false) {
     isDaySubmitted = true;
     stopDayTimer();
 
+    const percentage = (totalScore / totalQuestions) * 100;
+    let message = "";
+    if (percentage === 0) {
+        message = "Ôi không, 0 điểm rồi kìa! Mau nghe lại và làm lại ngay nhé, nếu không, Miss Nguyệt đấm cậu đó!";
+    } else if (percentage >= 50) {
+        message = "Cậu đã làm tốt lắm. Tiếp tục cố gắng nhé! Miss Nguyệt khen cậu đó!";
+    } else {
+        message = "Không sao đâu, miễn là cậu vẫn đang cố gắng! Kiên nhẫn thêm một chút nhé! Nếu không, Miss Nguyệt đấm cậu đó!";
+    }
+
     // Save state to localStorage
     localStorage.setItem(`vstep_day_${currentDay}`, JSON.stringify({
         submitted: true,
+        score: totalScore,
+        total: totalQuestions,
+        message: message,
         timeSpent: totalElapsedSeconds,
         audioTime: recordedAudioSec,
         submittedAt: new Date().toISOString()
@@ -974,6 +991,9 @@ function submitAll(isRestore = false) {
                 <i class="fa-solid fa-circle-check"></i>
                 <span>Đã nộp bài: <strong>${formatTimerHuman(totalElapsedSeconds)}</strong> (Nghe audio: <strong>${formatTimerDigits(recordedAudioSec)}</strong>)</span>
             </div>
+            <button type="button" class="btn-timer-view-confirm" onclick="openDayConfirmationModal('${currentDay}')" title="Mở lại ảnh xác nhận kết quả để chụp màn hình gửi cô Nguyệt">
+                <i class="fa-solid fa-camera"></i> Xem lại ảnh xác nhận
+            </button>
         `;
     }
     
@@ -986,15 +1006,6 @@ function submitAll(isRestore = false) {
         }
         if (window.StreakGuard) {
             window.StreakGuard.markTodayActivityDone();
-        }
-        const percentage = (totalScore / totalQuestions) * 100;
-        let message = "";
-        if (percentage === 0) {
-            message = "Ôi không, 0 điểm rồi kìa! Mau nghe lại và làm lại ngay nhé, nếu không, Miss Nguyệt đấm cậu đó!";
-        } else if (percentage >= 50) {
-            message = "Cậu đã làm tốt lắm. Tiếp tục cố gắng nhé! Miss Nguyệt khen cậu đó!";
-        } else {
-            message = "Không sao đâu, miễn là cậu vẫn đang cố gắng! Kiên nhẫn thêm một chút nhé! Nếu không, Miss Nguyệt đấm cậu đó!";
         }
         showModal(totalScore, totalQuestions, message, totalElapsedSeconds, recordedAudioSec);
     }
@@ -1106,17 +1117,29 @@ function updateProgress() {
     
     if (pctEl) pctEl.textContent = `${percentage}%`;
     if (fillEl) fillEl.style.width = `${percentage}%`;
+
+    const countBadge = document.getElementById('sidebar-history-count');
+    if (countBadge) {
+        if (completedDays > 0) {
+            countBadge.textContent = String(completedDays);
+            countBadge.style.display = 'inline-block';
+        } else {
+            countBadge.style.display = 'none';
+        }
+    }
 }
 
-function showModal(score, total, message, timeSpent, audioTime) {
+function showModal(score, total, message, timeSpent, audioTime, targetDayId) {
     const modal = document.getElementById('result-modal');
     if (!modal) return;
     
+    const activeDay = targetDayId || currentDay;
+
     // Hiển thị tên học viên, lớp, DAY
     const savedName = localStorage.getItem('vstep_student_name') || 'Học viên';
     const savedClass = localStorage.getItem('vstep_student_class') || '--';
-    const rawDayNum = String(currentDay || '').replace(/\D+/g, '');
-    const dayStr = rawDayNum ? `DAY ${rawDayNum.padStart(2, '0')}` : ((daysData[currentDay] && daysData[currentDay].title) || 'DAY');
+    const rawDayNum = String(activeDay || '').replace(/\D+/g, '');
+    const dayStr = rawDayNum ? `DAY ${rawDayNum.padStart(2, '0')}` : ((daysData[activeDay] && daysData[activeDay].title) || 'DAY');
 
     const dayTextEl = document.getElementById('modal-day-text');
     const nameEl = document.getElementById('modal-student-name');
@@ -1135,7 +1158,7 @@ function showModal(score, total, message, timeSpent, audioTime) {
     let finalAudioTime = typeof audioTime === 'number' ? audioTime : null;
     if (finalTimeSpent === null) {
         try {
-            const savedState = JSON.parse(localStorage.getItem(`vstep_day_${currentDay}`) || '{}');
+            const savedState = JSON.parse(localStorage.getItem(`vstep_day_${activeDay}`) || '{}');
             if (typeof savedState.timeSpent === 'number') finalTimeSpent = savedState.timeSpent;
             if (typeof savedState.audioTime === 'number') finalAudioTime = savedState.audioTime;
         } catch(e) {}
@@ -1175,6 +1198,9 @@ function showModal(score, total, message, timeSpent, audioTime) {
     const retryBtn = document.getElementById('modal-retry-btn');
     retryBtn.onclick = () => {
         closeModal();
+        if (targetDayId && targetDayId !== currentDay) {
+            loadDay(targetDayId);
+        }
         resetAll();
     };
     
@@ -1184,6 +1210,209 @@ function showModal(score, total, message, timeSpent, audioTime) {
 function closeModal() {
     const modal = document.getElementById('result-modal');
     if (modal) modal.classList.add('hidden');
+}
+
+function openDayConfirmationModal(dayId) {
+    try {
+        const raw = localStorage.getItem(`vstep_day_${dayId}`);
+        if (!raw) {
+            alert('Chưa tìm thấy dữ liệu nộp bài của ngày này!');
+            return;
+        }
+        const state = JSON.parse(raw);
+        const dayInfo = daysData[dayId] || {};
+        let totalQuestions = state.total;
+        if (!totalQuestions) {
+            let qCount = 0;
+            const practices = dayInfo.practices || [dayInfo];
+            practices.forEach(p => { if (p && p.questions) qCount += p.questions.length; });
+            totalQuestions = qCount || 8;
+        }
+        const score = typeof state.score === 'number' ? state.score : totalQuestions;
+        const message = state.message || (
+            score === 0 ? "Ôi không, 0 điểm rồi kìa! Mau nghe lại và làm lại ngay nhé, nếu không, Miss Nguyệt đấm cậu đó!" :
+            (score / totalQuestions >= 0.5 ? "Cậu đã làm tốt lắm. Tiếp tục cố gắng nhé! Miss Nguyệt khen cậu đó!" :
+            "Không sao đâu, miễn là cậu vẫn đang cố gắng! Kiên nhẫn thêm một chút nhé! Nếu không, Miss Nguyệt đấm cậu đó!")
+        );
+        showModal(score, totalQuestions, message, state.timeSpent, state.audioTime, dayId);
+    } catch(e) {
+        console.warn('Error opening confirmation modal:', e);
+    }
+}
+
+function openHistoryModal() {
+    const modal = document.getElementById('history-modal');
+    if (!modal) return;
+    renderHistoryList();
+    modal.classList.remove('hidden');
+}
+
+function closeHistoryModal() {
+    const modal = document.getElementById('history-modal');
+    if (modal) modal.classList.add('hidden');
+}
+
+function renderHistoryList() {
+    const listEl = document.getElementById('history-list');
+    const nameEl = document.getElementById('hist-student-name');
+    const classEl = document.getElementById('hist-student-class');
+    const totalEl = document.getElementById('hist-total-count');
+    const sidebarCountEl = document.getElementById('sidebar-history-count');
+
+    const savedName = localStorage.getItem('vstep_student_name') || 'Học viên';
+    const savedClass = localStorage.getItem('vstep_student_class') || '--';
+
+    if (nameEl) nameEl.textContent = savedName;
+    if (classEl) classEl.textContent = `Lớp: ${savedClass}`;
+
+    const submittedItems = [];
+
+    // Quét toàn bộ các DAY đã nộp bài
+    Object.keys(daysData).forEach(dayKey => {
+        try {
+            const raw = localStorage.getItem(`vstep_day_${dayKey}`);
+            if (!raw) return;
+            const state = JSON.parse(raw);
+            const isSubmitted = state.submittedPractices ? 
+                Object.values(state.submittedPractices).some(val => val === true) : 
+                Boolean(state.submitted);
+
+            if (isSubmitted) {
+                const dayInfo = daysData[dayKey] || {};
+                let totalQ = state.total;
+                if (!totalQ) {
+                    let count = 0;
+                    const practices = dayInfo.practices || [dayInfo];
+                    practices.forEach(p => { if (p && p.questions) count += p.questions.length; });
+                    totalQ = count || 8;
+                }
+                const score = typeof state.score === 'number' ? state.score : totalQ;
+                
+                submittedItems.push({
+                    dayId: dayKey,
+                    dayNum: parseInt(String(dayKey).replace(/\D+/g, ''), 10) || 0,
+                    title: dayInfo.sidebarTitle || `DAY ${String(dayKey).padStart(2, '0')}`,
+                    score: score,
+                    total: totalQ,
+                    timeSpent: state.timeSpent,
+                    audioTime: state.audioTime,
+                    submittedAt: state.submittedAt
+                });
+            }
+        } catch(e) {}
+    });
+
+    // Sắp xếp: bài nộp gần nhất lên đầu (theo thời gian hoặc số DAY)
+    submittedItems.sort((a, b) => {
+        if (a.submittedAt && b.submittedAt) {
+            return new Date(b.submittedAt) - new Date(a.submittedAt);
+        }
+        return b.dayNum - a.dayNum;
+    });
+
+    if (totalEl) totalEl.textContent = String(submittedItems.length);
+    if (sidebarCountEl) {
+        if (submittedItems.length > 0) {
+            sidebarCountEl.textContent = String(submittedItems.length);
+            sidebarCountEl.style.display = 'inline-block';
+        } else {
+            sidebarCountEl.style.display = 'none';
+        }
+    }
+
+    if (!listEl) return;
+
+    if (submittedItems.length === 0) {
+        listEl.innerHTML = `
+            <div class="history-empty-state">
+                <i class="fa-solid fa-folder-open"></i>
+                <h4 style="margin: 0 0 6px 0; color: #64748b;">Chưa có bài nghe nào được nộp</h4>
+                <p style="margin: 0; font-size: 0.84rem;">Sau khi hoàn thành và nộp bất kỳ bài nghe nào, kết quả và ảnh xác nhận sẽ hiển thị ở đây để bạn xem lại bất cứ lúc nào!</p>
+            </div>
+        `;
+        return;
+    }
+
+    listEl.innerHTML = submittedItems.map(item => {
+        const pct = Math.round((item.score / item.total) * 100);
+        let scoreClass = 'score-good';
+        if (pct === 0) scoreClass = 'score-low';
+        else if (pct < 50) scoreClass = 'score-mid';
+
+        const spentStr = typeof item.timeSpent === 'number' ? formatTimerHuman(item.timeSpent) : '--';
+        const audioStr = typeof item.audioTime === 'number' ? formatTimerDigits(item.audioTime) : '--';
+
+        const isRushed = typeof item.timeSpent === 'number' && (item.timeSpent < 60 || (typeof item.audioTime === 'number' && item.audioTime < 15));
+        const statusBadge = isRushed
+            ? `<span class="history-time-badge warning"><i class="fa-solid fa-triangle-exclamation"></i> Làm quá nhanh</span>`
+            : (typeof item.timeSpent === 'number'
+                ? `<span class="history-time-badge valid"><i class="fa-solid fa-circle-check"></i> Hợp lệ</span>`
+                : '');
+
+        let dateStr = '';
+        if (item.submittedAt) {
+            try {
+                const d = new Date(item.submittedAt);
+                dateStr = `${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')} - ${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getFullYear()}`;
+            } catch(e) {}
+        }
+
+        return `
+            <div class="history-item-row">
+                <div class="history-item-main">
+                    <div class="history-item-top">
+                        <span class="history-day-badge"><i class="fa-solid fa-headphones"></i> ${item.title}</span>
+                        <span class="history-score-badge ${scoreClass}">${item.score}/${item.total} câu (${pct}%)</span>
+                        ${statusBadge}
+                    </div>
+                    <div class="history-item-meta">
+                        <span><i class="fa-solid fa-stopwatch"></i> Làm bài: <strong>${spentStr}</strong></span>
+                        <span><i class="fa-solid fa-headphones"></i> Nghe audio: <strong>${audioStr}</strong></span>
+                        ${dateStr ? `<span><i class="fa-regular fa-calendar-check"></i> ${dateStr}</span>` : ''}
+                    </div>
+                </div>
+                <div class="history-item-actions">
+                    <button type="button" class="btn-history-view-confirm" onclick="closeHistoryModal(); openDayConfirmationModal('${item.dayId}')" title="Mở bảng điểm để chụp ảnh màn hình">
+                        <i class="fa-solid fa-camera"></i> Xem ảnh xác nhận
+                    </button>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function initHistoryEvents() {
+    const btnSidebar = document.getElementById('btn-sidebar-history');
+    if (btnSidebar) {
+        btnSidebar.addEventListener('click', () => openHistoryModal());
+    }
+
+    const btnHeader = document.getElementById('btn-header-history');
+    if (btnHeader) {
+        btnHeader.addEventListener('click', () => openHistoryModal());
+    }
+
+    const btnClose = document.getElementById('btn-close-history');
+    if (btnClose) {
+        btnClose.addEventListener('click', () => closeHistoryModal());
+    }
+
+    const historyModal = document.getElementById('history-modal');
+    if (historyModal) {
+        historyModal.addEventListener('click', (e) => {
+            if (e.target === historyModal) closeHistoryModal();
+        });
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            closeHistoryModal();
+            closeModal();
+        }
+    });
+
+    // Refresh history badge count initially
+    renderHistoryList();
 }
 
 // --- Login Logic ---
