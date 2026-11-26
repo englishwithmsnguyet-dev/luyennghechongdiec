@@ -1416,7 +1416,7 @@ function initHistoryEvents() {
 }
 
 // --- Login Logic ---
-const ALLOWED_CLASSES = ['ONB103', 'CB213', 'CB211', 'CB210', 'B2', 'GV'];
+const ALLOWED_CLASSES = ['ONB103', 'CB213', 'CB211', 'CB210', 'GV'];
 const VALID_PASSWORDS = ['STUDYHARD', 'PRACTICELISTENING'];
 const REQUIRED_PASSWORD = 'PRACTICELISTENING';
 const GOOGLE_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSe1aPeztsRKWBdl_fG_2HulMol6L9p0EDWPaxzKR69E5vHJcA/formResponse';
@@ -1481,10 +1481,7 @@ const CLASS_STUDENTS = {
         'Trần Thị Tiên Tiên',
         'Lê Kim Tuyền'
     ],
-    'B2': [
-        'Gia Tuệ'
-    ]
-};
+    };
 
 const AUTHORIZED_STUDENTS = [
     ...CLASS_STUDENTS['ONB103'],
@@ -1507,6 +1504,7 @@ function removeAccents(str) {
 function isAuthorizedStudent(name, classVal) {
     const norm = normalizeName(name);
     const noAcc = removeAccents(name);
+    if (noAcc.includes('gia tue') || noAcc.replace(/\s+/g, '').includes('giatue') || classVal === 'B2') return false;
     if (norm === 'ptmn' || norm.includes('ptmn') || noAcc.includes('co nguyet')) return true;
 
     const matchesName = (auth) => {
@@ -1536,8 +1534,17 @@ function initLogin() {
     // Luôn luôn hiển thị màn hình đăng nhập khi mở hoặc tải lại trang
     loginOverlay.classList.remove('hidden');
     updateUserProfileBadge();
-    const savedName = localStorage.getItem('vstep_student_name') || '';
-    const savedClass = localStorage.getItem('vstep_student_class') || '';
+    let savedName = localStorage.getItem('vstep_student_name') || '';
+    let savedClass = localStorage.getItem('vstep_student_class') || '';
+    const normSaved = (typeof removeAccents === 'function' ? removeAccents(savedName) : savedName.toLowerCase());
+    if (normSaved.includes('gia tue') || normSaved.replace(/\s+/g, '').includes('giatue') || savedClass === 'B2') {
+        localStorage.removeItem('vstep_student_name');
+        localStorage.removeItem('vstep_student_class');
+        localStorage.removeItem('vstep_student_logged_in');
+        sessionStorage.removeItem('vstep_student_logged_in');
+        savedName = '';
+        savedClass = '';
+    }
 
     const isTeacherSaved = savedName.toUpperCase().includes('PTMN') || savedName.toLowerCase().includes('cô nguyệt');
     if (studentNameInput) {
@@ -1637,6 +1644,13 @@ function initLogin() {
             if (!rawClassVal) {
                 showLoginError('Vui lòng nhập Lớp học (ONB103, CB213, CB211, CB210 hoặc B2).');
                 if (studentClassInput) studentClassInput.focus();
+                return;
+            }
+
+            const noAcc = removeAccents(nameVal);
+            if (noAcc.includes('gia tue') || noAcc.replace(/\s+/g, '').includes('giatue') || rawClassVal === 'B2') {
+                showLoginError('Tài khoản học viên "Gia Tuệ" hiện đã bị KHÓA! Vui lòng liên hệ Giáo viên (Cô Nguyệt).');
+                if (studentNameInput) studentNameInput.focus();
                 return;
             }
 
@@ -1793,8 +1807,17 @@ function updateUserProfileBadge() {
         return;
     }
 
-    const savedName = localStorage.getItem('vstep_student_name') || '';
-    const savedClass = localStorage.getItem('vstep_student_class') || '';
+    let savedName = localStorage.getItem('vstep_student_name') || '';
+    let savedClass = localStorage.getItem('vstep_student_class') || '';
+    const normSaved = (typeof removeAccents === 'function' ? removeAccents(savedName) : savedName.toLowerCase());
+    if (normSaved.includes('gia tue') || normSaved.replace(/\s+/g, '').includes('giatue') || savedClass === 'B2') {
+        localStorage.removeItem('vstep_student_name');
+        localStorage.removeItem('vstep_student_class');
+        localStorage.removeItem('vstep_student_logged_in');
+        sessionStorage.removeItem('vstep_student_logged_in');
+        savedName = '';
+        savedClass = '';
+    }
 
     if (savedName) {
         nameEl.textContent = savedName;
